@@ -1,0 +1,58 @@
+name: publish
+
+on:
+  repository_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.event.action == 'publish'
+    
+    steps:      
+      - uses: actions/checkout@v2
+        with:
+          path: go-tapir
+
+      - uses: actions/setup-go@v2
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'stroeer/tapir'
+          ref: 'refactor/go-modules'          
+          path: tapir
+
+      - name: generate module 
+        run: make LANGUAGE=go && make go-mod
+        working-directory: tapir
+
+      - name: test module
+        run: go test -v .
+        working-directory: tapir/go
+
+      - run: find gen/go
+        working-directory: tapir
+
+      - run: find . | grep .git
+        working-directory: go-tapir
+
+      - name: update go-tapir
+        working-directory: tapir
+        run: |
+          rsync -avu --delete gen/go/ ../go-tapir/ \
+          --exclude=/.git \
+          --exclude=/.github \
+          --exclude=README.md 
+
+      - name: release module
+        working-directory: go-tapir
+        run: |
+          RELEASE_TAG=${{ github.event.client_payload.tag }}
+          echo $RELEASE_TAG
+          git status
+          git add --all
+          git commit -vsam "release generated module $(RELEASE_TAG)"
+          git tag -a $(RELEASE_TAG) -m "$(RELEASE_TAG)"
+          git push origin $(RELEASE_TAG)
+          git push origin main
+
+      
