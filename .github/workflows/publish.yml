@@ -11,7 +11,7 @@ jobs:
     if: github.event.action == 'publish'
 
     steps:      
-      - run: echo ${{ env.RELEASE_TAG }}
+      - run: echo $RELEASE_TAG
 
       - uses: actions/setup-go@v2
 
@@ -53,9 +53,9 @@ jobs:
           git config --list
           git status
           git add -A
-          git commit -vsam "release generated module ${{ env.RELEASE_TAG }}"
-          git tag -a $${{ env.RELEASE_TAG }} -m "${{ env.RELEASE_TAG }}"
-          git push $${{ env.RELEASE_TAG }}
+          git commit -vsam "release generated module $RELEASE_TAG"
+          git tag -a $RELEASE_TAG -m "$RELEASE_TAG"
+          git push $RELEASE_TAG
           git push 
 
       
