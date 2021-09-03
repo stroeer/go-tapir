@@ -1,0 +1,52 @@
+name: release
+
+on:
+  repository_dispatch:
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      RELEASE_TAG: v${{ github.event.client_payload.tag }}
+    if: github.event.action == 'publish'
+
+    steps:      
+      - run: echo $RELEASE_TAG
+
+      - uses: actions/setup-go@v2
+
+      - uses: actions/checkout@v2
+        with:
+          path: 'go-tapir'
+
+      - uses: actions/checkout@v2
+        with:
+          repository: 'stroeer/tapir'
+          ref: '${{ env.RELEASE_TAG }}'
+          path: 'tapir'
+
+      - name: generate module 
+        run: make LANGUAGE=go && make go-mod
+        working-directory: tapir
+      
+      - name: synchronize module
+        working-directory: tapir
+        run: |
+          rsync -avu --delete gen/go/ ../go-tapir/ \
+          --exclude=/.git \
+          --exclude=/.github \
+          --exclude=README.md \
+          --exclude=go.mod \
+          --exclude=go.sum
+          
+      - name: release module
+        working-directory: go-tapir
+        run: |                    
+          git config --global user.name 'tapir-bot'
+          git config --global user.email 'tapir-bot@users.noreply.github.com'
+          git status
+          git add -A && \
+          git commit -vsam "tapir $RELEASE_TAG" && \
+          git tag -a $RELEASE_TAG -m "$RELEASE_TAG" && \
+          git push origin $RELEASE_TAG && \
+          git push || true
