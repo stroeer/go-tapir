@@ -55,7 +55,8 @@ jobs:
           git add -A
           git commit -vsam "release generated module $RELEASE_TAG"
           git tag -a $RELEASE_TAG -m "$RELEASE_TAG"
-          git push $RELEASE_TAG
+          git tag -l
+          git push origin $RELEASE_TAG
           git push 
 
       
