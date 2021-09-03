@@ -41,7 +41,8 @@ jobs:
           rsync -avu --delete gen/go/ ../go-tapir/ \
           --exclude=/.git \
           --exclude=/.github \
-          --exclude=README.md
+          --exclude=README.md \
+          --exclude=go.mod
           
       - name: release module
         working-directory: go-tapir
