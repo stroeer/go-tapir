@@ -4,6 +4,9 @@
 // 	protoc        v3.17.3
 // source: stroeer/page/stage/v1/stage.proto
 
+//*
+// @FileArticle Stage
+
 package stage
 
 import (
@@ -21,8 +24,15 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+//*
 // A stream stage with companions and the main content area.
 // Embedded items can be editorial articles, advertisement and/or stages (only one level deep).
+// ```protobuf
+// message Stage {
+//   Configuration configuration = 1;
+//   repeated Item stream_items = 2;
+//   repeated Item companion_items = 3;
+// ```
 type Stage struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

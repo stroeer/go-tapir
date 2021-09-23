@@ -4,6 +4,9 @@
 // 	protoc        v3.17.3
 // source: stroeer/page/article/v1/article_page_service.proto
 
+//*
+// @FileArticle ℠ArticlePageService
+
 package article
 
 import (
@@ -20,13 +23,19 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-// Request message to get an article page.
+//*
+// ## Request message to get an article page.
+// ```protobuf
+// message GetArticlePageRequest {
+//   # ID of the article defined by the content management system (required).
+//   int64 id = 1;
+// }
+// ```
 type GetArticlePageRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// ID of the article defined by the content management system (required).
 	Id int64 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 }
 
@@ -69,11 +78,19 @@ func (x *GetArticlePageRequest) GetId() int64 {
 	return 0
 }
 
-// Response message for an article page request.
+//*
+// ## Response message for an article page request.
 //
 // Status codes:
-// * `OK`: article exists and is published
-// * `NOT_FOUND`: article doesn't exist or is not published according to it's `Metadata`
+// - `OK` | article exists and is published
+// - `NOT_FOUND` | article doesn't exist or is not published according to it's `Metadata`
+//
+// ```protobuf
+// message GetArticlePageResponse {
+//  # Article page with all render relevant data for the user and SEO bots.
+//  stroeer.page.article.v1.ArticlePage article_page = 1;
+// }
+// ```
 type GetArticlePageResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

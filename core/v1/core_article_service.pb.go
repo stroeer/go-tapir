@@ -4,6 +4,9 @@
 // 	protoc        v3.17.3
 // source: stroeer/core/v1/core_article_service.proto
 
+//*
+// @FileArticle ℠ArticleService
+
 package core
 
 import (

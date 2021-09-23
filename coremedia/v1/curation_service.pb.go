@@ -4,6 +4,9 @@
 // 	protoc        v3.17.3
 // source: stroeer/coremedia/v1/curation_service.proto
 
+//*
+// @FileArticle ℠CurationService
+
 package coremedia
 
 import (
