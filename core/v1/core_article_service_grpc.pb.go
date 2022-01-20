@@ -7,6 +7,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -18,10 +19,11 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArticleServiceClient interface {
-	// Returns an article by it's `id`
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*Article, error)
-	// Returns pages of articles by their `home_section`
 	ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*ListArticlesResponse, error)
+	// Allow Empty as request param
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	ListSections(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListSectionsResponse, error)
 }
 
 type articleServiceClient struct {
@@ -50,14 +52,24 @@ func (c *articleServiceClient) ListArticles(ctx context.Context, in *ListArticle
 	return out, nil
 }
 
+func (c *articleServiceClient) ListSections(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListSectionsResponse, error) {
+	out := new(ListSectionsResponse)
+	err := c.cc.Invoke(ctx, "/stroeer.core.v1.ArticleService/ListSections", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticleServiceServer is the server API for ArticleService service.
 // All implementations must embed UnimplementedArticleServiceServer
 // for forward compatibility
 type ArticleServiceServer interface {
-	// Returns an article by it's `id`
 	GetArticle(context.Context, *GetArticleRequest) (*Article, error)
-	// Returns pages of articles by their `home_section`
 	ListArticles(context.Context, *ListArticlesRequest) (*ListArticlesResponse, error)
+	// Allow Empty as request param
+	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
+	ListSections(context.Context, *emptypb.Empty) (*ListSectionsResponse, error)
 	mustEmbedUnimplementedArticleServiceServer()
 }
 
@@ -70,6 +82,9 @@ func (UnimplementedArticleServiceServer) GetArticle(context.Context, *GetArticle
 }
 func (UnimplementedArticleServiceServer) ListArticles(context.Context, *ListArticlesRequest) (*ListArticlesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
+}
+func (UnimplementedArticleServiceServer) ListSections(context.Context, *emptypb.Empty) (*ListSectionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSections not implemented")
 }
 func (UnimplementedArticleServiceServer) mustEmbedUnimplementedArticleServiceServer() {}
 
@@ -120,6 +135,24 @@ func _ArticleService_ListArticles_Handler(srv interface{}, ctx context.Context, 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ArticleService_ListSections_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(emptypb.Empty)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServiceServer).ListSections(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/stroeer.core.v1.ArticleService/ListSections",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServiceServer).ListSections(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ArticleService_ServiceDesc is the grpc.ServiceDesc for ArticleService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +167,10 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListArticles",
 			Handler:    _ArticleService_ListArticles_Handler,
+		},
+		{
+			MethodName: "ListSections",
+			Handler:    _ArticleService_ListSections_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

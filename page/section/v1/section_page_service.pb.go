@@ -5,7 +5,7 @@
 // source: stroeer/page/section/v1/section_page_service.proto
 
 //*
-// @FileArticle ℠SectionPageService
+// @FileArticle ⚙︎ SectionPageService
 
 package section
 

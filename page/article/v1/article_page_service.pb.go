@@ -5,7 +5,7 @@
 // source: stroeer/page/article/v1/article_page_service.proto
 
 //*
-// @FileArticle ℠ArticlePageService
+// @FileArticle ⚙︎ ArticlePageService
 
 package article
 
