@@ -23,8 +23,6 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArticlePageServiceClient interface {
 	GetArticlePage(ctx context.Context, in *GetArticlePageRequest, opts ...grpc.CallOption) (*GetArticlePageResponse, error)
-	// request data to render Article Companions as individual html for esi integration on ArticlePages
-	GetArticleCompanions(ctx context.Context, in *GetArticleCompanionsRequest, opts ...grpc.CallOption) (*GetArticleCompanionsResponse, error)
 }
 
 type articlePageServiceClient struct {
@@ -44,22 +42,11 @@ func (c *articlePageServiceClient) GetArticlePage(ctx context.Context, in *GetAr
 	return out, nil
 }
 
-func (c *articlePageServiceClient) GetArticleCompanions(ctx context.Context, in *GetArticleCompanionsRequest, opts ...grpc.CallOption) (*GetArticleCompanionsResponse, error) {
-	out := new(GetArticleCompanionsResponse)
-	err := c.cc.Invoke(ctx, "/stroeer.page.article.v1.ArticlePageService/GetArticleCompanions", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ArticlePageServiceServer is the server API for ArticlePageService service.
 // All implementations must embed UnimplementedArticlePageServiceServer
 // for forward compatibility
 type ArticlePageServiceServer interface {
 	GetArticlePage(context.Context, *GetArticlePageRequest) (*GetArticlePageResponse, error)
-	// request data to render Article Companions as individual html for esi integration on ArticlePages
-	GetArticleCompanions(context.Context, *GetArticleCompanionsRequest) (*GetArticleCompanionsResponse, error)
 	mustEmbedUnimplementedArticlePageServiceServer()
 }
 
@@ -69,9 +56,6 @@ type UnimplementedArticlePageServiceServer struct {
 
 func (UnimplementedArticlePageServiceServer) GetArticlePage(context.Context, *GetArticlePageRequest) (*GetArticlePageResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticlePage not implemented")
-}
-func (UnimplementedArticlePageServiceServer) GetArticleCompanions(context.Context, *GetArticleCompanionsRequest) (*GetArticleCompanionsResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetArticleCompanions not implemented")
 }
 func (UnimplementedArticlePageServiceServer) mustEmbedUnimplementedArticlePageServiceServer() {}
 
@@ -104,24 +88,6 @@ func _ArticlePageService_GetArticlePage_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ArticlePageService_GetArticleCompanions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetArticleCompanionsRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ArticlePageServiceServer).GetArticleCompanions(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/stroeer.page.article.v1.ArticlePageService/GetArticleCompanions",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ArticlePageServiceServer).GetArticleCompanions(ctx, req.(*GetArticleCompanionsRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ArticlePageService_ServiceDesc is the grpc.ServiceDesc for ArticlePageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -132,10 +98,6 @@ var ArticlePageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetArticlePage",
 			Handler:    _ArticlePageService_GetArticlePage_Handler,
-		},
-		{
-			MethodName: "GetArticleCompanions",
-			Handler:    _ArticlePageService_GetArticleCompanions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
