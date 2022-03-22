@@ -53,6 +53,8 @@ type StageServiceClient interface {
 	//HTTP status: 504
 	//cacheable: no
 	GetStages(ctx context.Context, in *GetStagesRequest, opts ...grpc.CallOption) (*GetStagesResponse, error)
+	// request data to render Article Companions as individual html for esi integration on ArticlePages
+	GetArticleCompanions(ctx context.Context, in *GetArticleCompanionsRequest, opts ...grpc.CallOption) (*GetArticleCompanionsResponse, error)
 }
 
 type stageServiceClient struct {
@@ -66,6 +68,15 @@ func NewStageServiceClient(cc grpc.ClientConnInterface) StageServiceClient {
 func (c *stageServiceClient) GetStages(ctx context.Context, in *GetStagesRequest, opts ...grpc.CallOption) (*GetStagesResponse, error) {
 	out := new(GetStagesResponse)
 	err := c.cc.Invoke(ctx, "/stroeer.fragment.v1.StageService/GetStages", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *stageServiceClient) GetArticleCompanions(ctx context.Context, in *GetArticleCompanionsRequest, opts ...grpc.CallOption) (*GetArticleCompanionsResponse, error) {
+	out := new(GetArticleCompanionsResponse)
+	err := c.cc.Invoke(ctx, "/stroeer.fragment.v1.StageService/GetArticleCompanions", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -107,6 +118,8 @@ type StageServiceServer interface {
 	//HTTP status: 504
 	//cacheable: no
 	GetStages(context.Context, *GetStagesRequest) (*GetStagesResponse, error)
+	// request data to render Article Companions as individual html for esi integration on ArticlePages
+	GetArticleCompanions(context.Context, *GetArticleCompanionsRequest) (*GetArticleCompanionsResponse, error)
 	mustEmbedUnimplementedStageServiceServer()
 }
 
@@ -116,6 +129,9 @@ type UnimplementedStageServiceServer struct {
 
 func (UnimplementedStageServiceServer) GetStages(context.Context, *GetStagesRequest) (*GetStagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetStages not implemented")
+}
+func (UnimplementedStageServiceServer) GetArticleCompanions(context.Context, *GetArticleCompanionsRequest) (*GetArticleCompanionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetArticleCompanions not implemented")
 }
 func (UnimplementedStageServiceServer) mustEmbedUnimplementedStageServiceServer() {}
 
@@ -148,6 +164,24 @@ func _StageService_GetStages_Handler(srv interface{}, ctx context.Context, dec f
 	return interceptor(ctx, in, info, handler)
 }
 
+func _StageService_GetArticleCompanions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetArticleCompanionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(StageServiceServer).GetArticleCompanions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/stroeer.fragment.v1.StageService/GetArticleCompanions",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(StageServiceServer).GetArticleCompanions(ctx, req.(*GetArticleCompanionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // StageService_ServiceDesc is the grpc.ServiceDesc for StageService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -158,6 +192,10 @@ var StageService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetStages",
 			Handler:    _StageService_GetStages_Handler,
+		},
+		{
+			MethodName: "GetArticleCompanions",
+			Handler:    _StageService_GetArticleCompanions_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

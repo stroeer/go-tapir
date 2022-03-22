@@ -94,7 +94,6 @@ type SectionPage_Section struct {
 	//
 	// * `ref_path`: URL path for this section e.g. /section/id_$ID/title.html
 	// * `ref_canonical`: Canonical URL of this section, may differ if external, e.g. https://www.giga.de/tech/
-	// * `ref_amp`: AMP URL of this section
 	//
 	// Clients must be resilient to unknown or missing entry sets.
 	Fields map[string]string `protobuf:"bytes,1,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
