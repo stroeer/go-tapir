@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArticleServiceClient interface {
 	GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*Article, error)
+	BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesResponse, error)
 	ListArticles(ctx context.Context, in *ListArticlesRequest, opts ...grpc.CallOption) (*ListArticlesResponse, error)
 	// Allow Empty as request param
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
@@ -41,6 +42,15 @@ func NewArticleServiceClient(cc grpc.ClientConnInterface) ArticleServiceClient {
 func (c *articleServiceClient) GetArticle(ctx context.Context, in *GetArticleRequest, opts ...grpc.CallOption) (*Article, error) {
 	out := new(Article)
 	err := c.cc.Invoke(ctx, "/stroeer.core.v1.ArticleService/GetArticle", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *articleServiceClient) BatchGetArticles(ctx context.Context, in *BatchGetArticlesRequest, opts ...grpc.CallOption) (*BatchGetArticlesResponse, error) {
+	out := new(BatchGetArticlesResponse)
+	err := c.cc.Invoke(ctx, "/stroeer.core.v1.ArticleService/BatchGetArticles", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -70,6 +80,7 @@ func (c *articleServiceClient) ListSections(ctx context.Context, in *emptypb.Emp
 // for forward compatibility
 type ArticleServiceServer interface {
 	GetArticle(context.Context, *GetArticleRequest) (*Article, error)
+	BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesResponse, error)
 	ListArticles(context.Context, *ListArticlesRequest) (*ListArticlesResponse, error)
 	// Allow Empty as request param
 	// buf:lint:ignore RPC_REQUEST_STANDARD_NAME
@@ -83,6 +94,9 @@ type UnimplementedArticleServiceServer struct {
 
 func (UnimplementedArticleServiceServer) GetArticle(context.Context, *GetArticleRequest) (*Article, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetArticle not implemented")
+}
+func (UnimplementedArticleServiceServer) BatchGetArticles(context.Context, *BatchGetArticlesRequest) (*BatchGetArticlesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method BatchGetArticles not implemented")
 }
 func (UnimplementedArticleServiceServer) ListArticles(context.Context, *ListArticlesRequest) (*ListArticlesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListArticles not implemented")
@@ -117,6 +131,24 @@ func _ArticleService_GetArticle_Handler(srv interface{}, ctx context.Context, de
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(ArticleServiceServer).GetArticle(ctx, req.(*GetArticleRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _ArticleService_BatchGetArticles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(BatchGetArticlesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleServiceServer).BatchGetArticles(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/stroeer.core.v1.ArticleService/BatchGetArticles",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleServiceServer).BatchGetArticles(ctx, req.(*BatchGetArticlesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -167,6 +199,10 @@ var ArticleService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetArticle",
 			Handler:    _ArticleService_GetArticle_Handler,
+		},
+		{
+			MethodName: "BatchGetArticles",
+			Handler:    _ArticleService_BatchGetArticles_Handler,
 		},
 		{
 			MethodName: "ListArticles",
