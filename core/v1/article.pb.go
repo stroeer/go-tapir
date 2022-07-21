@@ -218,7 +218,7 @@ const (
 	//| `EDGE_SIDE_INCLUDE`    | `<esi:include>` that must be resolved server-side for SEO reasons, otherwise similar to `OEMBED`             |
 	//| `CITATION`             | oEmbed, contains one `metadata` [`Asset`][a]. Todo: sample                                                   |
 	//
-	//[a]: article_%3E_element_%3E_asset.html
+	//[a]: article_%DB%B0_element_%DB%B0_asset.html
 	//[e]: #element
 	//[image-sample]: #image-element
 	//[video-sample]: #image-element
@@ -487,6 +487,30 @@ func (Article_Body_Type) EnumDescriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_article_proto_rawDescGZIP(), []int{0, 2, 0}
 }
 
+//*
+// ## `enum State`
+//
+//State of the item ([`Article`](article.html), [`Element`](article.element.html))
+//in the content management system. The `state` in combination with
+//`start_time` and `end_time` determines whether or not this item should be
+//rendered; this must be respected by all consumers especially
+//when content is duplicated or cached.
+//
+//The terms `deleted` (articles) and `archived` (media lib) are interchangeable/synonyms.
+//This enum combines those two into `State.DELETED`. An Article is in `State.DELETED`
+//if it was deleted in the content management system, or if it's [end_time](#end_time)
+//has been reached.
+//
+//An Article is in `State.DRAFT` if it has never been published, or if the
+//`start_time` lies in the future.
+//
+//| Enum value          | description                                                    |
+//|---------------------|----------------------------------------------------------------|
+//| `STATE_UNSPECIFIED` | unspecified                                                    |
+//| `PUBLISHED`         | published content which is currently within its validity dates |
+//| `DELETED`           | this content is deleted or expired in the CMS                  |
+//| `DRAFT`             | this content was never published in the CMS                    |
+//
 type Article_Metadata_State int32
 
 const (
@@ -537,6 +561,76 @@ func (x Article_Metadata_State) Number() protoreflect.EnumNumber {
 // Deprecated: Use Article_Metadata_State.Descriptor instead.
 func (Article_Metadata_State) EnumDescriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_article_proto_rawDescGZIP(), []int{0, 3, 0}
+}
+
+//*
+// ## `enum EventSource`
+//
+// Even more detail about the circumstances of transformation for this article.
+//
+// The `EventSource` will be of type:
+//
+// - `PRIMARY` in case this article was directly _updated_ and _published_
+// - `SECONDARY` in case this article was indirectly updated.
+// This can be caused by updates of _nested elements_,
+// such as _Videos_ that may expire at some point. Another source of change may be
+// _Scheduled Events_ like this item becomes _valid_ or _invalid_ at some
+// point in time in the future after the item's original publication time.
+//
+// | Enum value               | description                                                            |
+// |--------------------------|------------------------------------------------------------------------|
+// | EVENT_SOURCE_UNSPECIFIED | unspecified                                                            |
+// | PRIMARY                  | this article's transformation was caused by a direct change in the CMS |
+// | SECONDARY                | this article's transformation was caused by a transitive update        |
+//
+// @CodeBlockStart protobuf
+type Article_Metadata_EventSource int32
+
+const (
+	Article_Metadata_EVENT_SOURCE_UNSPECIFIED Article_Metadata_EventSource = 0
+	Article_Metadata_PRIMARY                  Article_Metadata_EventSource = 1
+	Article_Metadata_SECONDARY                Article_Metadata_EventSource = 2
+)
+
+// Enum value maps for Article_Metadata_EventSource.
+var (
+	Article_Metadata_EventSource_name = map[int32]string{
+		0: "EVENT_SOURCE_UNSPECIFIED",
+		1: "PRIMARY",
+		2: "SECONDARY",
+	}
+	Article_Metadata_EventSource_value = map[string]int32{
+		"EVENT_SOURCE_UNSPECIFIED": 0,
+		"PRIMARY":                  1,
+		"SECONDARY":                2,
+	}
+)
+
+func (x Article_Metadata_EventSource) Enum() *Article_Metadata_EventSource {
+	p := new(Article_Metadata_EventSource)
+	*p = x
+	return p
+}
+
+func (x Article_Metadata_EventSource) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (Article_Metadata_EventSource) Descriptor() protoreflect.EnumDescriptor {
+	return file_stroeer_core_v1_article_proto_enumTypes[7].Descriptor()
+}
+
+func (Article_Metadata_EventSource) Type() protoreflect.EnumType {
+	return &file_stroeer_core_v1_article_proto_enumTypes[7]
+}
+
+func (x Article_Metadata_EventSource) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use Article_Metadata_EventSource.Descriptor instead.
+func (Article_Metadata_EventSource) EnumDescriptor() ([]byte, []int) {
+	return file_stroeer_core_v1_article_proto_rawDescGZIP(), []int{0, 3, 1}
 }
 
 type Article struct {
@@ -593,9 +687,9 @@ type Article struct {
 	//| `entities`     | `string` `[deprecated]`   | Extracted entities from the article body like persons, locations, organizations etc. `deprecated` — use `keywords` instead.                  |
 	//
 	//[t]:   #enum-type
-	//[b]:   body.html
-	//[e]:   article.element.html
-	//[k]:   article.keyword.html
+	//[b]:   article_%DB%B0_body.html
+	//[e]:   article_%DB%B0_element.html
+	//[k]:   article_%DB%B0_keyword.html
 	//[st]:  #enum-subtype
 	//[ref]: reference.html
 	Id          int64           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
@@ -927,30 +1021,35 @@ type Article_Metadata struct {
 	//     google.protobuf.Timestamp update_time = 5;
 	//     google.protobuf.Timestamp transformation_time = 6;
 	//     int64 transformation_errors = 7;
+	//     google.protobuf.Timestamp last_modification_time = 8;
+	//     EventSource event_source = 9;
 	// }
 	//```
 	//
-	//| Field name               | Type              | Description                                                                                                                                                                                                                                                                                                             |
-	//|--------------------------|-------------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `state`                  | [`State`][state]  | State of the article in the content management system. See [`enum State`](#enum-state)                                                                                                                                                                                                                                  |
-	//| `start_time`             | [`Timestamp`][ts] | Manually set editorial timestamp (_Gültig von_) at which the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                  |
-	//| `end_time`               | [`Timestamp`][ts] | Manually set editorial timestamp (_Gültig bis_) till the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                           |
-	//| `publish_time`           | [`Timestamp`][ts] | Editorial timestamp (_Publikationsdatum_) of the first publication of the article in seconds of UTC time since Unix epoch. This date will be set automatically by the content management system.                                                                                                                             |
-	//| `update_time`            | [`Timestamp`][ts] | Editorial timestamp (_Aktualisierungsdatum_) at which the article was updated in seconds of UTC time since Unix epoch. On first publication this timestamp matches `publish_time`. Afterwards it's either updated manually in the content management system or automatically if the article content changed *significantly*. |
-	//| `transformation_time`    | [`Timestamp`][ts] | Technical timestamp at which the article was transformed in the API layer in seconds of UTC time since Unix epoch.                                                                                                                                                                                                      |
-	//| `transformation_errors`  | `int64`           | Number of errors occurred while fetching and/or transforming optional article components (e.g. `embeds` or nested `documents`) to an `article` message.                                                                                                                                                                 |
-	//| `last_modification_time` | [`Timestamp`][ts] | Technical timestamp at which the article was published regardless of the amount and significance of the change.                                                                                                                                                                                                        |
+	//| Field name               | Type                | Description                                                                                                                                                                                                                                                                                                                  |
+	//|--------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+	//| `state`                  | [`State`][state]    | State of the article in the content management system. See [`enum State`](#enum-state)                                                                                                                                                                                                                                       |
+	//| `start_time`             | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig von_) at which the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                       |
+	//| `end_time`               | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig bis_) till the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                           |
+	//| `publish_time`           | [`Timestamp`][ts]   | Editorial timestamp (_Publikationsdatum_) of the first publication of the article in seconds of UTC time since Unix epoch. This date will be set automatically by the content management system.                                                                                                                             |
+	//| `update_time`            | [`Timestamp`][ts]   | Editorial timestamp (_Aktualisierungsdatum_) at which the article was updated in seconds of UTC time since Unix epoch. On first publication this timestamp matches `publish_time`. Afterwards it's either updated manually in the content management system or automatically if the article content changed *significantly*. |
+	//| `transformation_time`    | [`Timestamp`][ts]   | Technical timestamp at which the article was transformed in the API layer in seconds of UTC time since Unix epoch.                                                                                                                                                                                                           |
+	//| `transformation_errors`  | `int64`             | Number of errors occurred while fetching and/or transforming optional article components (e.g. `embeds` or nested `documents`) to an `article` message.                                                                                                                                                                      |
+	//| `last_modification_time` | [`Timestamp`][ts]   | Technical timestamp at which the article was published regardless of the amount and significance of the change.                                                                                                                                                                                                              |
+	//| `event_source`           | [`EventSource`][es] | Source of the event that caused this item to be transformed and to be written into the DB.                                                                                                                                                                                                                                   |
 	//
 	//[ts]:    https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp
 	//[state]: #state
-	State                Article_Metadata_State `protobuf:"varint,1,opt,name=state,proto3,enum=stroeer.core.v1.Article_Metadata_State" json:"state,omitempty"`
-	StartTime            *timestamppb.Timestamp `protobuf:"bytes,2,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
-	EndTime              *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
-	PublishTime          *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=publish_time,json=publishTime,proto3" json:"publish_time,omitempty"`
-	UpdateTime           *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
-	TransformationTime   *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=transformation_time,json=transformationTime,proto3" json:"transformation_time,omitempty"`
-	TransformationErrors int64                  `protobuf:"varint,7,opt,name=transformation_errors,json=transformationErrors,proto3" json:"transformation_errors,omitempty"`
-	LastModificationTime *timestamppb.Timestamp `protobuf:"bytes,8,opt,name=last_modification_time,json=lastModificationTime,proto3" json:"last_modification_time,omitempty"`
+	//[es]:    #enum-eventsource
+	State                Article_Metadata_State       `protobuf:"varint,1,opt,name=state,proto3,enum=stroeer.core.v1.Article_Metadata_State" json:"state,omitempty"`
+	StartTime            *timestamppb.Timestamp       `protobuf:"bytes,2,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
+	EndTime              *timestamppb.Timestamp       `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
+	PublishTime          *timestamppb.Timestamp       `protobuf:"bytes,4,opt,name=publish_time,json=publishTime,proto3" json:"publish_time,omitempty"`
+	UpdateTime           *timestamppb.Timestamp       `protobuf:"bytes,5,opt,name=update_time,json=updateTime,proto3" json:"update_time,omitempty"`
+	TransformationTime   *timestamppb.Timestamp       `protobuf:"bytes,6,opt,name=transformation_time,json=transformationTime,proto3" json:"transformation_time,omitempty"`
+	TransformationErrors int64                        `protobuf:"varint,7,opt,name=transformation_errors,json=transformationErrors,proto3" json:"transformation_errors,omitempty"`
+	LastModificationTime *timestamppb.Timestamp       `protobuf:"bytes,8,opt,name=last_modification_time,json=lastModificationTime,proto3" json:"last_modification_time,omitempty"`
+	EventSource          Article_Metadata_EventSource `protobuf:"varint,9,opt,name=event_source,json=eventSource,proto3,enum=stroeer.core.v1.Article_Metadata_EventSource" json:"event_source,omitempty"`
 }
 
 func (x *Article_Metadata) Reset() {
@@ -1041,28 +1140,26 @@ func (x *Article_Metadata) GetLastModificationTime() *timestamppb.Timestamp {
 	return nil
 }
 
+func (x *Article_Metadata) GetEventSource() Article_Metadata_EventSource {
+	if x != nil {
+		return x.EventSource
+	}
+	return Article_Metadata_EVENT_SOURCE_UNSPECIFIED
+}
+
 type Article_Keyword struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
 	//*
-	//Extracted keywords from the article body like persons, locations, organizations etc.
+	// Extracted keywords from the article body like persons, locations, organizations etc.
 	//
-	//## Proto
-	//```protobuf
-	// message Keyword {
-	//     string value = 1;
-	//     string type = 2;
-	//     float score = 3;
-	// }
-	//```
-	//
-	//| Field name              | Type              | Description                                                                                                                                                                                                                                                                                                           |
-	//|-------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `value`                 | `string`          | Unique value of this keyword.                                                                                                                                                                                                                                |
-	//| `type`                 | `string`          | Type/Category of this keyword like `location`, `organization`, `person`                                                                                                                                                                                                                                |
-	//| `score`                 | `float`          | Score for the relevance of this keyword set by the engine |
+	// | Field name              | Type              | Description                                                                                                                                                                                                                                                                                                           |
+	// |-------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+	// | `value`                 | `string`          | Unique value of this keyword.                                                                                                                                                                                                                                |
+	// | `type`                 | `string`          | Type/Category of this keyword like `location`, `organization`, `person`                                                                                                                                                                                                                                |
+	// | `score`                 | `float`          | Score for the relevance of this keyword set by the engine |
 	Value string  `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	Type  string  `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	Score float32 `protobuf:"fixed32,3,opt,name=score,proto3" json:"score,omitempty"`
@@ -1370,7 +1467,7 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x1a, 0x1c, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f,
 	0x76, 0x31, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0xd1, 0x17, 0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0xec, 0x18, 0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
 	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x31, 0x0a, 0x04, 0x74,
 	0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1d, 0x2e, 0x73, 0x74, 0x72, 0x6f,
 	0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x72, 0x74, 0x69,
@@ -1497,7 +1594,7 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x53, 0x43, 0x4c, 0x41, 0x49, 0x4d, 0x45, 0x52, 0x10, 0x03, 0x12, 0x0d, 0x0a, 0x09, 0x54, 0x52,
 	0x55, 0x53, 0x54, 0x5f, 0x42, 0x4f, 0x58, 0x10, 0x04, 0x12, 0x15, 0x0a, 0x11, 0x54, 0x41, 0x42,
 	0x4c, 0x45, 0x5f, 0x4f, 0x46, 0x5f, 0x43, 0x4f, 0x4e, 0x54, 0x45, 0x4e, 0x54, 0x53, 0x10, 0x05,
-	0x1a, 0xd2, 0x04, 0x0a, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x3d, 0x0a,
+	0x1a, 0xed, 0x05, 0x0a, 0x08, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x12, 0x3d, 0x0a,
 	0x05, 0x73, 0x74, 0x61, 0x74, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x27, 0x2e, 0x73,
 	0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x41,
 	0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x2e, 0x4d, 0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e,
@@ -1529,41 +1626,51 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x6e, 0x5f, 0x74, 0x69, 0x6d, 0x65, 0x18, 0x08, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67,
 	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54,
 	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x14, 0x6c, 0x61, 0x73, 0x74, 0x4d, 0x6f,
-	0x64, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x69, 0x6d, 0x65, 0x22, 0x45,
-	0x0a, 0x05, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x15, 0x0a, 0x11, 0x53, 0x54, 0x41, 0x54, 0x45,
-	0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x0d,
-	0x0a, 0x09, 0x50, 0x55, 0x42, 0x4c, 0x49, 0x53, 0x48, 0x45, 0x44, 0x10, 0x01, 0x12, 0x0b, 0x0a,
-	0x07, 0x44, 0x45, 0x4c, 0x45, 0x54, 0x45, 0x44, 0x10, 0x02, 0x12, 0x09, 0x0a, 0x05, 0x44, 0x52,
-	0x41, 0x46, 0x54, 0x10, 0x03, 0x1a, 0x49, 0x0a, 0x07, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64,
-	0x12, 0x14, 0x0a, 0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52,
-	0x05, 0x76, 0x61, 0x6c, 0x75, 0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02,
-	0x20, 0x01, 0x28, 0x09, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x63,
-	0x6f, 0x72, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65,
-	0x22, 0x85, 0x01, 0x0a, 0x04, 0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x10, 0x54, 0x59, 0x50,
-	0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12,
-	0x0b, 0x0a, 0x07, 0x41, 0x52, 0x54, 0x49, 0x43, 0x4c, 0x45, 0x10, 0x01, 0x12, 0x0d, 0x0a, 0x05,
-	0x49, 0x4d, 0x41, 0x47, 0x45, 0x10, 0x02, 0x1a, 0x02, 0x08, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x56,
-	0x49, 0x44, 0x45, 0x4f, 0x10, 0x03, 0x12, 0x0b, 0x0a, 0x07, 0x47, 0x41, 0x4c, 0x4c, 0x45, 0x52,
-	0x59, 0x10, 0x04, 0x12, 0x09, 0x0a, 0x05, 0x45, 0x4d, 0x42, 0x45, 0x44, 0x10, 0x05, 0x12, 0x0a,
-	0x0a, 0x06, 0x41, 0x55, 0x54, 0x48, 0x4f, 0x52, 0x10, 0x06, 0x12, 0x0e, 0x0a, 0x06, 0x41, 0x47,
-	0x45, 0x4e, 0x43, 0x59, 0x10, 0x07, 0x1a, 0x02, 0x08, 0x01, 0x12, 0x0c, 0x0a, 0x08, 0x45, 0x58,
-	0x54, 0x45, 0x52, 0x4e, 0x41, 0x4c, 0x10, 0x08, 0x22, 0xb8, 0x01, 0x0a, 0x07, 0x53, 0x75, 0x62,
-	0x54, 0x79, 0x70, 0x65, 0x12, 0x18, 0x0a, 0x14, 0x53, 0x55, 0x42, 0x5f, 0x54, 0x59, 0x50, 0x45,
-	0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x08,
-	0x0a, 0x04, 0x4e, 0x45, 0x57, 0x53, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x43, 0x4f, 0x4c, 0x55,
-	0x4d, 0x4e, 0x10, 0x02, 0x12, 0x0e, 0x0a, 0x0a, 0x43, 0x4f, 0x4d, 0x4d, 0x45, 0x4e, 0x54, 0x41,
-	0x52, 0x59, 0x10, 0x03, 0x12, 0x0d, 0x0a, 0x09, 0x49, 0x4e, 0x54, 0x45, 0x52, 0x56, 0x49, 0x45,
-	0x57, 0x10, 0x04, 0x12, 0x0f, 0x0a, 0x0b, 0x43, 0x4f, 0x4e, 0x54, 0x52, 0x4f, 0x56, 0x45, 0x52,
-	0x53, 0x59, 0x10, 0x05, 0x12, 0x10, 0x0a, 0x0c, 0x54, 0x41, 0x47, 0x45, 0x53, 0x41, 0x4e, 0x42,
-	0x52, 0x55, 0x43, 0x48, 0x10, 0x06, 0x12, 0x0d, 0x0a, 0x09, 0x45, 0x56, 0x45, 0x52, 0x47, 0x52,
-	0x45, 0x45, 0x4e, 0x10, 0x07, 0x12, 0x11, 0x0a, 0x0d, 0x41, 0x47, 0x45, 0x4e, 0x43, 0x59, 0x5f,
-	0x49, 0x4d, 0x50, 0x4f, 0x52, 0x54, 0x10, 0x08, 0x12, 0x0f, 0x0a, 0x0b, 0x41, 0x44, 0x56, 0x45,
-	0x52, 0x54, 0x4f, 0x52, 0x49, 0x41, 0x4c, 0x10, 0x09, 0x12, 0x08, 0x0a, 0x04, 0x51, 0x55, 0x49,
-	0x5a, 0x10, 0x0a, 0x42, 0x40, 0x0a, 0x12, 0x64, 0x65, 0x2e, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65,
-	0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x28, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2f,
-	0x67, 0x6f, 0x2d, 0x74, 0x61, 0x70, 0x69, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31,
-	0x3b, 0x63, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x64, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x54, 0x69, 0x6d, 0x65, 0x12, 0x50,
+	0x0a, 0x0c, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x5f, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x18, 0x09,
+	0x20, 0x01, 0x28, 0x0e, 0x32, 0x2d, 0x2e, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2e, 0x63,
+	0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x2e, 0x4d,
+	0x65, 0x74, 0x61, 0x64, 0x61, 0x74, 0x61, 0x2e, 0x45, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x6f, 0x75,
+	0x72, 0x63, 0x65, 0x52, 0x0b, 0x65, 0x76, 0x65, 0x6e, 0x74, 0x53, 0x6f, 0x75, 0x72, 0x63, 0x65,
+	0x22, 0x45, 0x0a, 0x05, 0x53, 0x74, 0x61, 0x74, 0x65, 0x12, 0x15, 0x0a, 0x11, 0x53, 0x54, 0x41,
+	0x54, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00,
+	0x12, 0x0d, 0x0a, 0x09, 0x50, 0x55, 0x42, 0x4c, 0x49, 0x53, 0x48, 0x45, 0x44, 0x10, 0x01, 0x12,
+	0x0b, 0x0a, 0x07, 0x44, 0x45, 0x4c, 0x45, 0x54, 0x45, 0x44, 0x10, 0x02, 0x12, 0x09, 0x0a, 0x05,
+	0x44, 0x52, 0x41, 0x46, 0x54, 0x10, 0x03, 0x22, 0x47, 0x0a, 0x0b, 0x45, 0x76, 0x65, 0x6e, 0x74,
+	0x53, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x12, 0x1c, 0x0a, 0x18, 0x45, 0x56, 0x45, 0x4e, 0x54, 0x5f,
+	0x53, 0x4f, 0x55, 0x52, 0x43, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49,
+	0x45, 0x44, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x50, 0x52, 0x49, 0x4d, 0x41, 0x52, 0x59, 0x10,
+	0x01, 0x12, 0x0d, 0x0a, 0x09, 0x53, 0x45, 0x43, 0x4f, 0x4e, 0x44, 0x41, 0x52, 0x59, 0x10, 0x02,
+	0x1a, 0x49, 0x0a, 0x07, 0x4b, 0x65, 0x79, 0x77, 0x6f, 0x72, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x76,
+	0x61, 0x6c, 0x75, 0x65, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x76, 0x61, 0x6c, 0x75,
+	0x65, 0x12, 0x12, 0x0a, 0x04, 0x74, 0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52,
+	0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x18, 0x03,
+	0x20, 0x01, 0x28, 0x02, 0x52, 0x05, 0x73, 0x63, 0x6f, 0x72, 0x65, 0x22, 0x85, 0x01, 0x0a, 0x04,
+	0x54, 0x79, 0x70, 0x65, 0x12, 0x14, 0x0a, 0x10, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53,
+	0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x0b, 0x0a, 0x07, 0x41, 0x52,
+	0x54, 0x49, 0x43, 0x4c, 0x45, 0x10, 0x01, 0x12, 0x0d, 0x0a, 0x05, 0x49, 0x4d, 0x41, 0x47, 0x45,
+	0x10, 0x02, 0x1a, 0x02, 0x08, 0x01, 0x12, 0x09, 0x0a, 0x05, 0x56, 0x49, 0x44, 0x45, 0x4f, 0x10,
+	0x03, 0x12, 0x0b, 0x0a, 0x07, 0x47, 0x41, 0x4c, 0x4c, 0x45, 0x52, 0x59, 0x10, 0x04, 0x12, 0x09,
+	0x0a, 0x05, 0x45, 0x4d, 0x42, 0x45, 0x44, 0x10, 0x05, 0x12, 0x0a, 0x0a, 0x06, 0x41, 0x55, 0x54,
+	0x48, 0x4f, 0x52, 0x10, 0x06, 0x12, 0x0e, 0x0a, 0x06, 0x41, 0x47, 0x45, 0x4e, 0x43, 0x59, 0x10,
+	0x07, 0x1a, 0x02, 0x08, 0x01, 0x12, 0x0c, 0x0a, 0x08, 0x45, 0x58, 0x54, 0x45, 0x52, 0x4e, 0x41,
+	0x4c, 0x10, 0x08, 0x22, 0xb8, 0x01, 0x0a, 0x07, 0x53, 0x75, 0x62, 0x54, 0x79, 0x70, 0x65, 0x12,
+	0x18, 0x0a, 0x14, 0x53, 0x55, 0x42, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50,
+	0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x4e, 0x45, 0x57,
+	0x53, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x43, 0x4f, 0x4c, 0x55, 0x4d, 0x4e, 0x10, 0x02, 0x12,
+	0x0e, 0x0a, 0x0a, 0x43, 0x4f, 0x4d, 0x4d, 0x45, 0x4e, 0x54, 0x41, 0x52, 0x59, 0x10, 0x03, 0x12,
+	0x0d, 0x0a, 0x09, 0x49, 0x4e, 0x54, 0x45, 0x52, 0x56, 0x49, 0x45, 0x57, 0x10, 0x04, 0x12, 0x0f,
+	0x0a, 0x0b, 0x43, 0x4f, 0x4e, 0x54, 0x52, 0x4f, 0x56, 0x45, 0x52, 0x53, 0x59, 0x10, 0x05, 0x12,
+	0x10, 0x0a, 0x0c, 0x54, 0x41, 0x47, 0x45, 0x53, 0x41, 0x4e, 0x42, 0x52, 0x55, 0x43, 0x48, 0x10,
+	0x06, 0x12, 0x0d, 0x0a, 0x09, 0x45, 0x56, 0x45, 0x52, 0x47, 0x52, 0x45, 0x45, 0x4e, 0x10, 0x07,
+	0x12, 0x11, 0x0a, 0x0d, 0x41, 0x47, 0x45, 0x4e, 0x43, 0x59, 0x5f, 0x49, 0x4d, 0x50, 0x4f, 0x52,
+	0x54, 0x10, 0x08, 0x12, 0x0f, 0x0a, 0x0b, 0x41, 0x44, 0x56, 0x45, 0x52, 0x54, 0x4f, 0x52, 0x49,
+	0x41, 0x4c, 0x10, 0x09, 0x12, 0x08, 0x0a, 0x04, 0x51, 0x55, 0x49, 0x5a, 0x10, 0x0a, 0x42, 0x40,
+	0x0a, 0x12, 0x64, 0x65, 0x2e, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72,
+	0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2f, 0x67, 0x6f, 0x2d, 0x74, 0x61,
+	0x70, 0x69, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x3b, 0x63, 0x6f, 0x72, 0x65,
+	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1578,62 +1685,64 @@ func file_stroeer_core_v1_article_proto_rawDescGZIP() []byte {
 	return file_stroeer_core_v1_article_proto_rawDescData
 }
 
-var file_stroeer_core_v1_article_proto_enumTypes = make([]protoimpl.EnumInfo, 7)
+var file_stroeer_core_v1_article_proto_enumTypes = make([]protoimpl.EnumInfo, 8)
 var file_stroeer_core_v1_article_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_stroeer_core_v1_article_proto_goTypes = []interface{}{
-	(Article_Type)(0),               // 0: stroeer.core.v1.Article.Type
-	(Article_SubType)(0),            // 1: stroeer.core.v1.Article.SubType
-	(Article_Element_Type)(0),       // 2: stroeer.core.v1.Article.Element.Type
-	(Article_Element_Relation)(0),   // 3: stroeer.core.v1.Article.Element.Relation
-	(Article_Element_Asset_Type)(0), // 4: stroeer.core.v1.Article.Element.Asset.Type
-	(Article_Body_Type)(0),          // 5: stroeer.core.v1.Article.Body.Type
-	(Article_Metadata_State)(0),     // 6: stroeer.core.v1.Article.Metadata.State
-	(*Article)(nil),                 // 7: stroeer.core.v1.Article
-	nil,                             // 8: stroeer.core.v1.Article.FieldsEntry
-	(*Article_Element)(nil),         // 9: stroeer.core.v1.Article.Element
-	(*Article_Body)(nil),            // 10: stroeer.core.v1.Article.Body
-	(*Article_Metadata)(nil),        // 11: stroeer.core.v1.Article.Metadata
-	(*Article_Keyword)(nil),         // 12: stroeer.core.v1.Article.Keyword
-	(*Article_Element_Asset)(nil),   // 13: stroeer.core.v1.Article.Element.Asset
-	nil,                             // 14: stroeer.core.v1.Article.Element.Asset.FieldsEntry
-	(*Article_Body_BodyNode)(nil),   // 15: stroeer.core.v1.Article.Body.BodyNode
-	nil,                             // 16: stroeer.core.v1.Article.Body.BodyNode.FieldsEntry
-	(*Reference)(nil),               // 17: stroeer.core.v1.Reference
-	(*timestamppb.Timestamp)(nil),   // 18: google.protobuf.Timestamp
+	(Article_Type)(0),                 // 0: stroeer.core.v1.Article.Type
+	(Article_SubType)(0),              // 1: stroeer.core.v1.Article.SubType
+	(Article_Element_Type)(0),         // 2: stroeer.core.v1.Article.Element.Type
+	(Article_Element_Relation)(0),     // 3: stroeer.core.v1.Article.Element.Relation
+	(Article_Element_Asset_Type)(0),   // 4: stroeer.core.v1.Article.Element.Asset.Type
+	(Article_Body_Type)(0),            // 5: stroeer.core.v1.Article.Body.Type
+	(Article_Metadata_State)(0),       // 6: stroeer.core.v1.Article.Metadata.State
+	(Article_Metadata_EventSource)(0), // 7: stroeer.core.v1.Article.Metadata.EventSource
+	(*Article)(nil),                   // 8: stroeer.core.v1.Article
+	nil,                               // 9: stroeer.core.v1.Article.FieldsEntry
+	(*Article_Element)(nil),           // 10: stroeer.core.v1.Article.Element
+	(*Article_Body)(nil),              // 11: stroeer.core.v1.Article.Body
+	(*Article_Metadata)(nil),          // 12: stroeer.core.v1.Article.Metadata
+	(*Article_Keyword)(nil),           // 13: stroeer.core.v1.Article.Keyword
+	(*Article_Element_Asset)(nil),     // 14: stroeer.core.v1.Article.Element.Asset
+	nil,                               // 15: stroeer.core.v1.Article.Element.Asset.FieldsEntry
+	(*Article_Body_BodyNode)(nil),     // 16: stroeer.core.v1.Article.Body.BodyNode
+	nil,                               // 17: stroeer.core.v1.Article.Body.BodyNode.FieldsEntry
+	(*Reference)(nil),                 // 18: stroeer.core.v1.Reference
+	(*timestamppb.Timestamp)(nil),     // 19: google.protobuf.Timestamp
 }
 var file_stroeer_core_v1_article_proto_depIdxs = []int32{
 	0,  // 0: stroeer.core.v1.Article.type:type_name -> stroeer.core.v1.Article.Type
 	1,  // 1: stroeer.core.v1.Article.sub_type:type_name -> stroeer.core.v1.Article.SubType
-	17, // 2: stroeer.core.v1.Article.section_tree:type_name -> stroeer.core.v1.Reference
-	8,  // 3: stroeer.core.v1.Article.fields:type_name -> stroeer.core.v1.Article.FieldsEntry
-	10, // 4: stroeer.core.v1.Article.bodies:type_name -> stroeer.core.v1.Article.Body
-	11, // 5: stroeer.core.v1.Article.metadata:type_name -> stroeer.core.v1.Article.Metadata
-	9,  // 6: stroeer.core.v1.Article.elements:type_name -> stroeer.core.v1.Article.Element
-	12, // 7: stroeer.core.v1.Article.keywords:type_name -> stroeer.core.v1.Article.Keyword
+	18, // 2: stroeer.core.v1.Article.section_tree:type_name -> stroeer.core.v1.Reference
+	9,  // 3: stroeer.core.v1.Article.fields:type_name -> stroeer.core.v1.Article.FieldsEntry
+	11, // 4: stroeer.core.v1.Article.bodies:type_name -> stroeer.core.v1.Article.Body
+	12, // 5: stroeer.core.v1.Article.metadata:type_name -> stroeer.core.v1.Article.Metadata
+	10, // 6: stroeer.core.v1.Article.elements:type_name -> stroeer.core.v1.Article.Element
+	13, // 7: stroeer.core.v1.Article.keywords:type_name -> stroeer.core.v1.Article.Keyword
 	2,  // 8: stroeer.core.v1.Article.Element.type:type_name -> stroeer.core.v1.Article.Element.Type
 	3,  // 9: stroeer.core.v1.Article.Element.relations:type_name -> stroeer.core.v1.Article.Element.Relation
-	13, // 10: stroeer.core.v1.Article.Element.assets:type_name -> stroeer.core.v1.Article.Element.Asset
-	9,  // 11: stroeer.core.v1.Article.Element.children:type_name -> stroeer.core.v1.Article.Element
-	15, // 12: stroeer.core.v1.Article.Body.children:type_name -> stroeer.core.v1.Article.Body.BodyNode
+	14, // 10: stroeer.core.v1.Article.Element.assets:type_name -> stroeer.core.v1.Article.Element.Asset
+	10, // 11: stroeer.core.v1.Article.Element.children:type_name -> stroeer.core.v1.Article.Element
+	16, // 12: stroeer.core.v1.Article.Body.children:type_name -> stroeer.core.v1.Article.Body.BodyNode
 	5,  // 13: stroeer.core.v1.Article.Body.type:type_name -> stroeer.core.v1.Article.Body.Type
 	6,  // 14: stroeer.core.v1.Article.Metadata.state:type_name -> stroeer.core.v1.Article.Metadata.State
-	18, // 15: stroeer.core.v1.Article.Metadata.start_time:type_name -> google.protobuf.Timestamp
-	18, // 16: stroeer.core.v1.Article.Metadata.end_time:type_name -> google.protobuf.Timestamp
-	18, // 17: stroeer.core.v1.Article.Metadata.publish_time:type_name -> google.protobuf.Timestamp
-	18, // 18: stroeer.core.v1.Article.Metadata.update_time:type_name -> google.protobuf.Timestamp
-	18, // 19: stroeer.core.v1.Article.Metadata.transformation_time:type_name -> google.protobuf.Timestamp
-	18, // 20: stroeer.core.v1.Article.Metadata.last_modification_time:type_name -> google.protobuf.Timestamp
-	4,  // 21: stroeer.core.v1.Article.Element.Asset.type:type_name -> stroeer.core.v1.Article.Element.Asset.Type
-	14, // 22: stroeer.core.v1.Article.Element.Asset.fields:type_name -> stroeer.core.v1.Article.Element.Asset.FieldsEntry
-	11, // 23: stroeer.core.v1.Article.Element.Asset.metadata:type_name -> stroeer.core.v1.Article.Metadata
-	16, // 24: stroeer.core.v1.Article.Body.BodyNode.fields:type_name -> stroeer.core.v1.Article.Body.BodyNode.FieldsEntry
-	15, // 25: stroeer.core.v1.Article.Body.BodyNode.children:type_name -> stroeer.core.v1.Article.Body.BodyNode
-	9,  // 26: stroeer.core.v1.Article.Body.BodyNode.elements:type_name -> stroeer.core.v1.Article.Element
-	27, // [27:27] is the sub-list for method output_type
-	27, // [27:27] is the sub-list for method input_type
-	27, // [27:27] is the sub-list for extension type_name
-	27, // [27:27] is the sub-list for extension extendee
-	0,  // [0:27] is the sub-list for field type_name
+	19, // 15: stroeer.core.v1.Article.Metadata.start_time:type_name -> google.protobuf.Timestamp
+	19, // 16: stroeer.core.v1.Article.Metadata.end_time:type_name -> google.protobuf.Timestamp
+	19, // 17: stroeer.core.v1.Article.Metadata.publish_time:type_name -> google.protobuf.Timestamp
+	19, // 18: stroeer.core.v1.Article.Metadata.update_time:type_name -> google.protobuf.Timestamp
+	19, // 19: stroeer.core.v1.Article.Metadata.transformation_time:type_name -> google.protobuf.Timestamp
+	19, // 20: stroeer.core.v1.Article.Metadata.last_modification_time:type_name -> google.protobuf.Timestamp
+	7,  // 21: stroeer.core.v1.Article.Metadata.event_source:type_name -> stroeer.core.v1.Article.Metadata.EventSource
+	4,  // 22: stroeer.core.v1.Article.Element.Asset.type:type_name -> stroeer.core.v1.Article.Element.Asset.Type
+	15, // 23: stroeer.core.v1.Article.Element.Asset.fields:type_name -> stroeer.core.v1.Article.Element.Asset.FieldsEntry
+	12, // 24: stroeer.core.v1.Article.Element.Asset.metadata:type_name -> stroeer.core.v1.Article.Metadata
+	17, // 25: stroeer.core.v1.Article.Body.BodyNode.fields:type_name -> stroeer.core.v1.Article.Body.BodyNode.FieldsEntry
+	16, // 26: stroeer.core.v1.Article.Body.BodyNode.children:type_name -> stroeer.core.v1.Article.Body.BodyNode
+	10, // 27: stroeer.core.v1.Article.Body.BodyNode.elements:type_name -> stroeer.core.v1.Article.Element
+	28, // [28:28] is the sub-list for method output_type
+	28, // [28:28] is the sub-list for method input_type
+	28, // [28:28] is the sub-list for extension type_name
+	28, // [28:28] is the sub-list for extension extendee
+	0,  // [0:28] is the sub-list for field type_name
 }
 
 func init() { file_stroeer_core_v1_article_proto_init() }
@@ -1733,7 +1842,7 @@ func file_stroeer_core_v1_article_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_stroeer_core_v1_article_proto_rawDesc,
-			NumEnums:      7,
+			NumEnums:      8,
 			NumMessages:   10,
 			NumExtensions: 0,
 			NumServices:   0,

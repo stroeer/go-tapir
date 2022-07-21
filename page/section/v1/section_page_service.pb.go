@@ -79,6 +79,7 @@ func (GetSectionPageResponse_PaginationType) EnumDescriptor() ([]byte, []int) {
 // Message to provide parameters when requesting data for a section page, currently only the path of the page.
 // Correct paths have a leading and a trailing slash, like `/nachrichten/unterhaltung/`
 // The homepage has the path `/`.
+//
 // ```protobuf
 // message GetSectionPageRequest {
 //   // valid section_path, with leading and trailing slash
@@ -91,6 +92,7 @@ func (GetSectionPageResponse_PaginationType) EnumDescriptor() ([]byte, []int) {
 //   // The service may return fewer than this value.
 //   int32 page = 2;
 // }
+// ```
 type GetSectionPageRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -155,6 +157,7 @@ func (x *GetSectionPageRequest) GetPage() int32 {
 //*
 // Response message when requesting data for a section page.
 // Responds with `NOT_FOUND` if an unknown path is requested, or the path is incorrect.
+//
 // ```protobuf
 // message GetSectionPageResponse {
 // stroeer.page.section.v1.SectionPage section_page = 1;

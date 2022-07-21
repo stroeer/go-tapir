@@ -161,7 +161,7 @@ func (x *GetCurationResponse) GetArticles() []*v1.Article {
 }
 
 //*
-//# `⚙︎ BatchGetCuration`
+// # `⚙︎ BatchGetCuration`
 //```protobuf
 //   rpc BatchGetCuration(BatchGetCurationRequest) returns (BatchGetCurationResponse) {}
 //```
