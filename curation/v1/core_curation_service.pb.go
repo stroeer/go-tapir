@@ -25,6 +25,21 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+//*
+// # `⚙︎ GetCuration`
+//
+// Fetch a curation by its id and return the [`repeated stroeer.core.v1.Article`](Article.html) this
+// curation contains. The response may be empty in case the curation does not contain any items.
+//
+// a `NOT_FOUND` status code will indicate the curation `id` does not exist.
+//
+// ## GetCurationRequest
+//
+// | Field name       | Type     | Description                                                 |
+// |------------------|----------|-------------------------------------------------------------|
+// | `id`             | `int64`  | [required] id of the list to be fetched                     |
+//
+// @CodeBlockStart protobuf
 type GetCurationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -72,23 +87,6 @@ func (x *GetCurationRequest) GetId() int64 {
 	return 0
 }
 
-//*
-//## GetCurationResponse
-// ```protobuf
-// message GetCurationResponse {
-//    repeated stroeer.core.v1.Article articles = 1;
-// }
-// ```
-//
-//| Field name       | Type                                | Description                                                                                                     |
-//|------------------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------|
-//| `id`             | `int64`                             | the _id_ of this list                                                                                           |
-//| `label`          | `string`                            | the _label_ of this list                                                                                        |
-//| `update_time`    | [`Timestamp`][ts]                   | Technical timestamp at which the curation was updated in seconds UTC time since Unix epoch.                     |
-//| `articles`       | `repeated` [`Article`][article]     | curated items of this list                                                                                      |
-//
-//[article]: article.html
-//[ts]:    https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp
 type GetCurationResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -162,26 +160,19 @@ func (x *GetCurationResponse) GetArticles() []*v1.Article {
 
 //*
 // # `⚙︎ BatchGetCuration`
-//```protobuf
-//   rpc BatchGetCuration(BatchGetCurationRequest) returns (BatchGetCurationResponse) {}
-//```
 //
-//Fetch multiple curations by their id and return the [`repeated stroeer.core.v1.Article`](Article.html) those
-//curations contain. The response may be empty in case the curation does not contain any items.
-//The ordering of items will the same ordering as the `ids` requested.
+// Fetch multiple curations by their id and return the [`repeated stroeer.core.v1.Article`](Article.html) those
+// curations contain. The response may be empty in case the curation does not contain any items.
+// The ordering of items will the same ordering as the `ids` requested.
 //
 //
-//## BatchGetCurationRequest
-//```protobuf
-// message BatchGetCurationRequest {
-//    repeated int64 id = 1;
-// }
-//```
+// ## BatchGetCurationRequest
 //
-//| Field name       | Type                                | Description                          |
-//|------------------|-------------------------------------|--------------------------------------|
-//| `ids`            | `repeated int64`                    | the _ids_ of the lists to be fetched |
+// | Field name       | Type                                | Description                          |
+// |------------------|-------------------------------------|--------------------------------------|
+// | `ids`            | `repeated int64`                    | the _ids_ of the lists to be fetched |
 //
+// @CodeBlockStart protobuf
 type BatchGetCurationRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -229,6 +220,16 @@ func (x *BatchGetCurationRequest) GetIds() []int64 {
 	return nil
 }
 
+//*
+// ## BatchGetCurationResponse
+//
+// | Field name       | Type                                | Description                                                                    |
+// |------------------|-------------------------------------|--------------------------------------------------------------------------------|
+// | `curations`      | [`GetCurationResponse`][cr]         | a single response item that corresponds to _ids_ this service was called with. |
+//
+// [cr]: #getcurationresponse
+//
+// @CodeBlockStart protobuf
 type BatchGetCurationResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache

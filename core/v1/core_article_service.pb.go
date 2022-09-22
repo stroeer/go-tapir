@@ -25,27 +25,22 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+//*
+// ## `Type`
+//
+// | Enum value         | Description                                                 |
+// |--------------------|-------------------------------------------------------------|
+// | `TYPE_UNSPECIFIED` | unspecified                                                 |
+// | `HOME_SECTION`     | query by exact _home section_ which is configured in the CMS|
+// | `ROOT_SECTION`     | query by exact _root section_ which is derived from _home section_ when only retaining the first level of the `path` |
+//
+// see the description [above](#query) why these query types exist, also see
+// [`Reference`](article.html#section_tree) how section information are stored.
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest_Query_Type int32
 
 const (
-	//*
-	// ## `Type`
-	// ```protobuf
-	// enum Type {
-	//    TYPE_UNSPECIFIED = 0;
-	//    HOME_SECTION = 1;
-	//    ROOT_SECTION = 2;
-	// }
-	// ```
-	//
-	// | Enum value         | Description                                                 |
-	// |--------------------|-------------------------------------------------------------|
-	// | `TYPE_UNSPECIFIED` | unspecified                                                 |
-	// | `HOME_SECTION`     | query by exact _home section_ which is configured in the CMS|
-	// | `ROOT_SECTION`     | query by exact _root section_ which is derived from _home section_ when only retaining the first level of the `path` |
-	//
-	// see the description [above](#query) why these query types exist, also see
-	// [`Reference`](article.html#section_tree) how section information are stored.
 	ListArticlesRequest_Query_TYPE_UNSPECIFIED ListArticlesRequest_Query_Type = 0
 	ListArticlesRequest_Query_HOME_SECTION     ListArticlesRequest_Query_Type = 1
 	ListArticlesRequest_Query_ROOT_SECTION     ListArticlesRequest_Query_Type = 2
@@ -92,27 +87,22 @@ func (ListArticlesRequest_Query_Type) EnumDescriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_core_article_service_proto_rawDescGZIP(), []int{3, 0, 0}
 }
 
+//*
+// ## `SortBy`
+//
+// | Enum value            | Description                                                |
+// |-----------------------|------------------------------------------------------------|
+// | `SORT_BY_UNSPECIFIED` | unspecified                                                |
+// | `UPDATE_TIME`         | sort by the content's [`update_time`][8]                   |
+// | `PUBLISH_TIME`        | sort by the content's [`publish_time`][9]                  |
+//
+// [8]: metadata.html#update_time
+// [9]: metadata.html#publish_time
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest_Query_SortBy int32
 
 const (
-	//*
-	// ## `SortBy`
-	// ```protobuf
-	// enum SortBy {
-	//    SORT_BY_UNSPECIFIED = 0;
-	//    UPDATE_TIME = 1;
-	//    PUBLISH_TIME = 2;
-	// }
-	// ```
-	//
-	// | Enum value            | Description                                                |
-	// |-----------------------|------------------------------------------------------------|
-	// | `SORT_BY_UNSPECIFIED` | unspecified                                                |
-	// | `UPDATE_TIME`         | sort by the content's [`update_time`][8]                   |
-	// | `PUBLISH_TIME`        | sort by the content's [`publish_time`][9]                  |
-	//
-	// [8]: metadata.html#update_time
-	// [9]: metadata.html#publish_time
 	ListArticlesRequest_Query_SORT_BY_UNSPECIFIED ListArticlesRequest_Query_SortBy = 0
 	ListArticlesRequest_Query_UPDATE_TIME         ListArticlesRequest_Query_SortBy = 1
 	ListArticlesRequest_Query_PUBLISH_TIME        ListArticlesRequest_Query_SortBy = 2
@@ -159,27 +149,21 @@ func (ListArticlesRequest_Query_SortBy) EnumDescriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_core_article_service_proto_rawDescGZIP(), []int{3, 0, 1}
 }
 
+//*
+// ## `Order`
+//
+// order of index traversal, default: ascending.
+//
+// | Enum value          | Description                      |
+// |---------------------|----------------------------------|
+// | `ORDER_UNSPECIFIED` | unspecified                      |
+// | `ASCENDING`         | ascending order index traversal  |
+// | `DESCENDING`        | descending order index traversal |
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest_Query_Order int32
 
 const (
-	//*
-	// ## `Order`
-	// ```protobuf
-	// enum Order {
-	//    ORDER_UNSPECIFIED = 0;
-	//    ASCENDING = 1;
-	//    DESCENDING = 2;
-	// }
-	// ```
-	//
-	// order of index traversal, default: ascending.
-	//
-	// | Enum value          | Description                      |
-	// |---------------------|----------------------------------|
-	// | `ORDER_UNSPECIFIED` | unspecified                      |
-	// | `ASCENDING`         | ascending order index traversal  |
-	// | `DESCENDING`        | descending order index traversal |
-	//
 	ListArticlesRequest_Query_ORDER_UNSPECIFIED ListArticlesRequest_Query_Order = 0
 	ListArticlesRequest_Query_ASCENDING         ListArticlesRequest_Query_Order = 1
 	ListArticlesRequest_Query_DESCENDING        ListArticlesRequest_Query_Order = 2
@@ -235,15 +219,11 @@ func (ListArticlesRequest_Query_Order) EnumDescriptor() ([]byte, []int) {
 // returns a single [`stroeer.core.v1.Article`](Article.html) if the given `id` exists,
 // an `Error`, otherwise. (todo: describe errors)
 //
-// ## `GetArticleRequest`
-// ```protobuf
-// message GetArticleRequest {
-//   int64 id = 1;
-// }
-// ```
 // | Field name       | Type                | Description                                                 |
 // |------------------|---------------------|-------------------------------------------------------------|
 // | `id`             | `int64`             | [required] Unique id of the article to be fetched.          |
+//
+// @CodeBlockStart protobuf
 type GetArticleRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -293,9 +273,6 @@ func (x *GetArticleRequest) GetId() int64 {
 
 //*
 // # `⚙︎ BatchGetArticle`
-// ```protobuf
-// rpc BatchGetArticles (BatchArticlesRequest) returns (BatchArticlesResponse) {}
-// ```
 //
 // returns multiple [`stroeer.core.v1.Article`](Article.html) for the given `ids`. The
 // ordering of items will the same ordering as the `ids` requested.
@@ -303,15 +280,11 @@ func (x *GetArticleRequest) GetId() int64 {
 //
 // There is a maximum of 100 items that can be queried in one batch.
 //
-// ## BatchGetArticlesRequest
-// ```protobuf
-// message BatchGetArticlesRequest {
-//     repeated int64 ids = 1;
-// }
-// ```
 // | Field name       | Type                | Description                                                 |
 // |------------------|---------------------|-------------------------------------------------------------|
 // | `ids`            | `repeated int64`    | [required] A list of ids of the articles to be fetched      |
+//
+// @CodeBlockStart protobuf
 type BatchGetArticlesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -407,15 +380,23 @@ func (x *BatchGetArticlesResponse) GetArticles() []*Article {
 }
 
 //*
-// # `⚙︎ ListArticles`
-// ```protobuf
-// rpc ListArticles (ListArticlesRequest) returns (ListArticlesResponse) {}
-// ```
-//
 // returns a [`message-listarticlesresponse`](#ListArticlesResponse) with
 // articles matching the query. If the results exceed 100 Articles or 1 MB
 // the response can be paginated to obtain additional results.
 //
+// ## `ListArticlesRequest`
+//
+// | Field name       | Type                | Description                                                 |
+// |------------------|---------------------|-------------------------------------------------------------|
+// | `query`          | [`Query`][1]        | [required] find items based on query values                 |
+// | `filters`        | [`Filters`][2]      | [optional] A filter expression is applied after a Query finishes, but before the results are returned. |
+// | `page_size`      | `int32`             | [optional] limit the results per page, default is `10`; max is `100` (or result exceeds `1 MB`). Values above 100 will be coerced to 100. If results get truncated, you can use pagination. |
+// | `page_token`     | `string`            | [optional]  A page token, received from a previous `ListArticles` call. Provide this to retrieve the subsequent page.  When paginating, all other parameters provided to `ListArticles` must match the call that provided the page token.|
+//
+// [1]: #query
+// [2]: #filters
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -487,27 +468,22 @@ func (x *ListArticlesRequest) GetPageToken() string {
 	return ""
 }
 
+//*
+// ## `ListArticlesResponse`
+//
+// | Field name       | Type                | Description                                                 |
+// |------------------|---------------------|-------------------------------------------------------------|
+// | `articles`       | [`Article`][article]| list of articles that match the `query` and also the `filter`, otherwise `empty`. |
+// | `next_page_token`| `string`            | A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages. |
+//
+// [article]: article.html
+//
+// @CodeBlockStart protobuf
 type ListArticlesResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	// ## `ListArticlesResponse`
-	// ```protobuf
-	// // query multiple articles
-	// message ListArticlesResponse {
-	//   repeated stroeer.core.v1.Article articles = 1;
-	//   string next_page_token = 2;
-	// }
-	// ```
-	//
-	// | Field name       | Type                | Description                                                 |
-	// |------------------|---------------------|-------------------------------------------------------------|
-	// | `articles`       | [`Article`][article]| list of articles that match the `query` and also the `filter`, otherwise `empty`. |
-	// | `next_page_token`| `string`            | A token that can be sent as `page_token` to retrieve the next page. If this field is omitted, there are no subsequent pages. |
-	//
-	// [article]: article.html
 	Articles      []*Article `protobuf:"bytes,1,rep,name=articles,proto3" json:"articles,omitempty"`
 	NextPageToken string     `protobuf:"bytes,2,opt,name=next_page_token,json=nextPageToken,proto3" json:"next_page_token,omitempty"`
 }
@@ -558,22 +534,21 @@ func (x *ListArticlesResponse) GetNextPageToken() string {
 	return ""
 }
 
+//*
+// # `⚙︎ ListSections`
+//
+// list the available root sections
+//
+// ## `ListSectionsResponse`
+//
+// list all available `root_sections` that can be used in the [`query`](#query) above.
+//
+// @CodeBlockStart protobuf
 type ListSectionsResponse struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	// ## `ListSectionsResponse`
-	//
-	// list all available `root_sections` that can be used in the [`query`](#query) above.
-	//
-	//
-	// ```protobuf
-	// message ListSectionsResponse {
-	//   repeated string sections = 1;
-	// }
-	// ```
 	Sections []string `protobuf:"bytes,1,rep,name=sections,proto3" json:"sections,omitempty"`
 }
 
@@ -616,6 +591,37 @@ func (x *ListSectionsResponse) GetSections() []string {
 	return nil
 }
 
+//*
+// ## `Query`
+//
+// Specify the search criteria. The list-API is build around sections which
+// come in two flavors:
+//
+// 1. `home_section`: find all articles that resides within that exact section.
+// The `home_section` is equal to the settings found in the CMS, e.g. `/nachrichten/wissen/`
+// 2. `root_section`: this property is derived from the `home_section` path
+// by retaining only the _root_ folder, e.g. for `/nachrichten/wissen/` the `root_section`
+// becomes `/nachrichten/`
+//
+// In most cases using the `root_section` should yield better results since
+// it will also find content in nested sections whereas `home_section` would
+// only return content which was curated into the exact section that was queried.
+//
+// | Field name       | Type                | Description                                                 |
+// |------------------|---------------------|-------------------------------------------------------------|
+// | `path`           | `string`            | [required] `path`, with leading and trailing slash (e.g. `/nachrichten/`) |
+// | `type`           | [`Type`][3]         | [required] query type, either `Type.HOME_SECTION` or `Type.ROOT_SECTION` |
+// | `sort_by`        | [`SortBy`][4]       | [required] sorting of the result set, either `SortBy.UPDATE_TIME` or `SortBy.PUBLISH_TIME`  |
+// | `order`          | [`Order`][5]        | [optional] sorting direction for the results regarding the `sort_by` field, default is `Order.ASCENDING` |
+// | `from_time`      | [`Timestamp`][ts]   | [optional] time constraint that refers to the `sort_by` field. |
+// | `to_time`        | [`Timestamp`][ts]   | [optional] time constraint that refers to the `sort_by` field. |
+//
+// [3]: #type
+// [4]: #sortby
+// [5]: #order
+// [ts]: https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest_Query struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -703,39 +709,33 @@ func (x *ListArticlesRequest_Query) GetToTime() *timestamppb.Timestamp {
 	return nil
 }
 
-// client side filters executed after the query was returned from the database
+//*
+// ## `Filters`
+//
+// If you need to further refine the Query results, you can optionally provide
+// a filter expression. A filter expression determines which items within the
+// Query results should be returned to you. All of the other results are discarded.
+//
+//  A filter expression is applied after a Query finishes, but before the results
+//  are returned. Therefore, a Query consumes the same amount of read capacity,
+//  regardless of whether a filter expression is present.
+//
+// | Field name           | Type                            | Description                                 |
+// |----------------------|---------------------------------|---------------------------------------------|
+// | `type_includes`      | [`ContentType`][6]     | `type` to include into the result set       |
+// | `type_includes`      | [`ContentType`][6]     | `type` to exclude from the result set       |
+// | `sub_type_includes`  | [`ContentSubType`][7]  | `sub_type` to include into the result set   |
+// | `sub_type_excludes`  | [`ContentSubType`][7]  | `sub_type` to exclude from the result set   |
+//
+// [6]: article.html#type
+// [7]: article.html#sub_type
+//
+// @CodeBlockStart protobuf
 type ListArticlesRequest_Filters struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	// ## `Filters`
-	// ```protobuf
-	// message Filters {
-	//    repeated Article.ContentType type_includes = 1;
-	//    repeated Article.ContentType type_excludes = 2;
-	//    repeated Article.ContentSubType sub_type_includes = 3;
-	//    repeated Article.ContentSubType sub_type_excludes = 4;
-	// }
-	// ```
-	// If you need to further refine the Query results, you can optionally provide
-	// a filter expression. A filter expression determines which items within the
-	// Query results should be returned to you. All of the other results are discarded.
-	//
-	//  A filter expression is applied after a Query finishes, but before the results
-	//  are returned. Therefore, a Query consumes the same amount of read capacity,
-	//  regardless of whether a filter expression is present.
-	//
-	// | Field name           | Type                            | Description                                 |
-	// |----------------------|---------------------------------|---------------------------------------------|
-	// | `type_includes`      | [`ContentType`][6]     | `type` to include into the result set       |
-	// | `type_includes`      | [`ContentType`][6]     | `type` to exclude from the result set       |
-	// | `sub_type_includes`  | [`ContentSubType`][7]  | `sub_type` to include into the result set   |
-	// | `sub_type_excludes`  | [`ContentSubType`][7]  | `sub_type` to exclude from the result set   |
-	//
-	// [6]: article.html#type
-	// [7]: article.html#sub_type
 	TypeIncludes    []Article_Type    `protobuf:"varint,1,rep,packed,name=type_includes,json=typeIncludes,proto3,enum=stroeer.core.v1.Article_Type" json:"type_includes,omitempty"`
 	TypeExcludes    []Article_Type    `protobuf:"varint,2,rep,packed,name=type_excludes,json=typeExcludes,proto3,enum=stroeer.core.v1.Article_Type" json:"type_excludes,omitempty"`
 	SubTypeIncludes []Article_SubType `protobuf:"varint,3,rep,packed,name=sub_type_includes,json=subTypeIncludes,proto3,enum=stroeer.core.v1.Article_SubType" json:"sub_type_includes,omitempty"`

@@ -93,42 +93,6 @@ func (Article_Type) EnumDescriptor() ([]byte, []int) {
 type Article_SubType int32
 
 const (
-	//*
-	//## `enum SubType`
-	//
-	//Content with `Type.ARTICLE` is usually sub typed to alter its form and purpose.
-	//
-	//### Proto
-	//```protobuf
-	// enum SubType {
-	//    SUB_TYPE_UNSPECIFIED = 0;
-	//    NEWS = 1;
-	//    COLUMN = 2;
-	//    COMMENTARY = 3;
-	//    INTERVIEW = 4;
-	//    CONTROVERSY = 5;
-	//    TAGESANBRUCH = 6;
-	//    EVERGREEN = 7;
-	//    AGENCY_IMPORT = 8;
-	//    ADVERTORIAL = 9;
-	//    QUIZ = 10;
-	// }
-	//```
-	//
-	//| Enum value             | Description                                                |
-	//|------------------------|------------------------------------------------------------|
-	//| `SUB_TYPE_UNSPECIFIED` | unspecified                                                |
-	//| `NEWS`                 | _Meldung/Nachricht_ — this is the default                  |
-	//| `COLUMN`               | _Kolumne_                                                  |
-	//| `COMMENTARY`           | _Kommentar_                                                |
-	//| `INTERVIEW`            | _Interview_                                                |
-	//| `CONTROVERSY`          | _Pro und Kontra/Streitgespräch_                            |
-	//| `TAGESANBRUCH`         | _Tagesanbruch_                                             |
-	//| `EVERGREEN`            | _Evergreen_                                                |
-	//| `AGENCY_IMPORT`        | Content originally imported from agency/tickers by the CMS |
-	//| `ADVERTORIAL`          | _Advertorial_                                              |
-	//| `QUIZ`                 | _Quiz_                                                     |
-	//
 	Article_SUB_TYPE_UNSPECIFIED Article_SubType = 0
 	Article_NEWS                 Article_SubType = 1
 	Article_COLUMN               Article_SubType = 2
@@ -140,6 +104,7 @@ const (
 	Article_AGENCY_IMPORT        Article_SubType = 8
 	Article_ADVERTORIAL          Article_SubType = 9
 	Article_QUIZ                 Article_SubType = 10
+	Article_GAME                 Article_SubType = 11
 )
 
 // Enum value maps for Article_SubType.
@@ -156,6 +121,7 @@ var (
 		8:  "AGENCY_IMPORT",
 		9:  "ADVERTORIAL",
 		10: "QUIZ",
+		11: "GAME",
 	}
 	Article_SubType_value = map[string]int32{
 		"SUB_TYPE_UNSPECIFIED": 0,
@@ -169,6 +135,7 @@ var (
 		"AGENCY_IMPORT":        8,
 		"ADVERTORIAL":          9,
 		"QUIZ":                 10,
+		"GAME":                 11,
 	}
 )
 
@@ -202,27 +169,6 @@ func (Article_SubType) EnumDescriptor() ([]byte, []int) {
 type Article_Element_Type int32
 
 const (
-	//*
-	//## `Element.Type`
-	//
-	//| Enum value             | Description                                                                                                  |
-	//|------------------------|--------------------------------------------------------------------------------------------------------------|
-	//| `TYPE_UNSPECIFIED`     | unspecified                                                                                                  |
-	//| `ARTICLE`              | unused                                                                                                       |
-	//| `IMAGE`                | image, containing further [`Assets`][a]. [Sample][image-sample]                                              |
-	//| `VIDEO`                | video, containing nested [`Asset`][a] and an optional nested image [`Element`][e]. [Sample][video-sample]    |
-	//| `GALLERY`              | gallery, consists of many nested image [`Element`][e]s.                                                      |
-	//| `OEMBED`               | oEmbed, contains one `metadata` [`Asset`][a]. Todo: sample                                                   |
-	//| `AUTHOR`               | author, contains one `metadata` [`Asset`][a] and an optional image [`Element`][e]. Todo: sample              |
-	//| `AGENCY`               | author, contains one `metadata` [`Asset`][a]                                                                 |
-	//| `EDGE_SIDE_INCLUDE`    | `<esi:include>` that must be resolved server-side for SEO reasons, otherwise similar to `OEMBED`             |
-	//| `CITATION`             | oEmbed, contains one `metadata` [`Asset`][a]. Todo: sample                                                   |
-	//
-	//[a]: article_%DB%B0_element_%DB%B0_asset.html
-	//[e]: #element
-	//[image-sample]: #image-element
-	//[video-sample]: #image-element
-	//[gallery-sample]: #gallery-element
 	Article_Element_TYPE_UNSPECIFIED  Article_Element_Type = 0
 	Article_Element_ARTICLE           Article_Element_Type = 1
 	Article_Element_IMAGE             Article_Element_Type = 2
@@ -298,6 +244,7 @@ func (Article_Element_Type) EnumDescriptor() ([]byte, []int) {
 // | `RELATION_UNSPECIFIED` | unspecified                                                                                       |
 // | `OPENER`               | As an opener element (within the content)                                                         |
 // | `TEASER`               | As an teaser element (when externally viewed)                                                     |
+// @CodeBlockStart protobuf
 type Article_Element_Relation int32
 
 const (
@@ -402,36 +349,25 @@ func (Article_Element_Asset_Type) EnumDescriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_article_proto_rawDescGZIP(), []int{0, 1, 0, 0}
 }
 
+//*
+// ## Type
+//
+// Each `Body` has a `Body.Type` to help the consumer to correctly interpret
+// the  [`BodyNode's`][bn] content.
+//
+// | Enum value          | Description                                                                                                               |
+// |---------------------|---------------------------------------------------------------------------------------------------------------------------|
+// | `TYPE_UNSPECIFIED`  | unspecified                                                                                                               |
+// | `BODY`              | The textual article body including all inline elements such as `IMAGE`, `VIDEO` and `EMBED`                               |
+// | `ARTICLE_SOURCES`   | A wrapper for all article sources ("Quellenaparat"). There can only be one of these per article.                          |
+// | `DISCLAIMER`        | A article disclaimer with important notes/legal stuff. E.g. "medizinischer Hinweis" on all medical articles               |
+// | `TRUST_BOX`         | Includes information what the current article type is (e.g. opinion article). There can only be one of these per article. |
+// | `TABLE_OF_CONTENTS` | Table of contents for this article, consists of anchors which refer to sub headlines within the `BODY`                    |
+//
+// @CodeBlockStart protobuf
 type Article_Body_Type int32
 
 const (
-	//*
-	//## Type
-	//
-	//Each `Body` has a `Body.Type` to help the consumer to correctly interpret
-	//the  [`BodyNode's`][bn] content.
-	//
-	//### Proto
-	//```protobuf
-	// enum Type {
-	//     TYPE_UNSPECIFIED = 0;
-	//     BODY = 1;
-	//     ARTICLE_SOURCES = 2;
-	//     DISCLAIMER = 3;
-	//     TRUST_BOX = 4;
-	//     TABLE_OF_CONTENTS = 5;
-	// }
-	//```
-	//
-	//| Enum value          | Description                                                                                                               |
-	//|---------------------|---------------------------------------------------------------------------------------------------------------------------|
-	//| `TYPE_UNSPECIFIED`  | unspecified                                                                                                               |
-	//| `BODY`              | The textual article body including all inline elements such as `IMAGE`, `VIDEO` and `EMBED`                               |
-	//| `ARTICLE_SOURCES`   | A wrapper for all article sources ("Quellenaparat"). There can only be one of these per article.                          |
-	//| `DISCLAIMER`        | A article disclaimer with important notes/legal stuff. E.g. "medizinischer Hinweis" on all medical articles               |
-	//| `TRUST_BOX`         | Includes information what the current article type is (e.g. opinion article). There can only be one of these per article. |
-	//| `TABLE_OF_CONTENTS` | Table of contents for this article, consists of anchors which refer to sub headlines within the `BODY`                    |
-	//
 	Article_Body_TYPE_UNSPECIFIED  Article_Body_Type = 0
 	Article_Body_BODY              Article_Body_Type = 1
 	Article_Body_ARTICLE_SOURCES   Article_Body_Type = 2
@@ -490,27 +426,28 @@ func (Article_Body_Type) EnumDescriptor() ([]byte, []int) {
 //*
 // ## `enum State`
 //
-//State of the item ([`Article`](article.html), [`Element`](article.element.html))
-//in the content management system. The `state` in combination with
-//`start_time` and `end_time` determines whether or not this item should be
-//rendered; this must be respected by all consumers especially
-//when content is duplicated or cached.
+// State of the item ([`Article`](article.html), [`Element`](article.element.html))
+// in the content management system. The `state` in combination with
+// `start_time` and `end_time` determines whether or not this item should be
+// rendered; this must be respected by all consumers especially
+// when content is duplicated or cached.
 //
-//The terms `deleted` (articles) and `archived` (media lib) are interchangeable/synonyms.
-//This enum combines those two into `State.DELETED`. An Article is in `State.DELETED`
-//if it was deleted in the content management system, or if it's [end_time](#end_time)
-//has been reached.
+// The terms `deleted` (articles) and `archived` (media lib) are interchangeable/synonyms.
+// This enum combines those two into `State.DELETED`. An Article is in `State.DELETED`
+// if it was deleted in the content management system, or if it's [end_time](#end_time)
+// has been reached.
 //
-//An Article is in `State.DRAFT` if it has never been published, or if the
-//`start_time` lies in the future.
+// An Article is in `State.DRAFT` if it has never been published, or if the
+// `start_time` lies in the future.
 //
-//| Enum value          | description                                                    |
-//|---------------------|----------------------------------------------------------------|
-//| `STATE_UNSPECIFIED` | unspecified                                                    |
-//| `PUBLISHED`         | published content which is currently within its validity dates |
-//| `DELETED`           | this content is deleted or expired in the CMS                  |
-//| `DRAFT`             | this content was never published in the CMS                    |
+// | Enum value          | description                                                    |
+// |---------------------|----------------------------------------------------------------|
+// | `STATE_UNSPECIFIED` | unspecified                                                    |
+// | `PUBLISHED`         | published content which is currently within its validity dates |
+// | `DELETED`           | this content is deleted or expired in the CMS                  |
+// | `DRAFT`             | this content was never published in the CMS                    |
 //
+// @CodeBlockStart protobuf
 type Article_Metadata_State int32
 
 const (
@@ -638,108 +575,16 @@ type Article struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	//An article represents a piece of content created in the content management
-	//system. Different types of content like text or video articles share
-	//the same message structure, they can be distinguished by the
-	//[`Article.Type`](#type) field.
-	//Text articles (`type = Article.Type.ARTICLE`) also have
-	//[`Article.SubType`](#sub_type) to differentiate its purpose and form.
-	//
-	//## Teaser
-	//
-	//To improve performance of database access and during network transmission tapir
-	//is using a lightweight representation of `Article` in some places.
-	//
-	//Depending on the service used to retrieve an article, the `Article` message might
-	//only contain data required on section pages (e.g. with `Article.body` set to `null`
-	//thus not containing any data that is only required on detail pages). This
-	//lightweight representation is sometimes referred to as `Teaser`.
-	//
-	//## Proto
-	//```protobuf
-	// message Article {
-	//     int64 id = 1;
-	//     Type type = 2;
-	//     SubType sub_type = 3;
-	//     stroeer.core.v1.Reference section_tree = 4;
-	//     map<string, string> fields = 5;
-	//     repeated Body bodies = 6; # [not present in Teaser]
-	//     Metadata metadata = 7;
-	//     repeated Element elements = 8;
-	//     repeated Keyword keywords = 9;
-	//     repeated int64 onwards = 10;
-	//     repeated string entities = 100 [deprecated = true];
-	// }
-	//```
-	//
-	//| Field name     | Type                      | Description                                                                                                                                  |
-	//|----------------|---------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `id`           | `int64`                   | Unique ID of the article defined by the content management system (required).                                                                |
-	//| `type`         | [`Type`][t]               | Main content type of the article (required). See list of supported [`ContentType`][ct]                                                       |
-	//| `sub_type`     | [`SubType`][st]           | Subtype of the article. For `ARTICLE` this field holds a `sub_type`, for others like `GALLERY` it may not.                                   |
-	//| `section_tree` | [`Reference`][ref]        | Hierarchical section tree information of the article (required).                                                                             |
-	//| `fields`       | `map<string, string>`     | Generic map containing general content and configuration information of the article (required). See [`fields`](#fields)                      |
-	//| `bodies`       | `repeated` [`Body`][b]    | Recursive textual body of the article to be rendered on detail pages. May be `null` for [_Teaser_](#teaser).                                 |
-	//| `elements`     | `repeated` [`Element`][e] | `Element`s required to render the teaser, such as `IMAGE`, `VIDEO` or `AUTHOR`                                                               |
-	//| `keywords`     | `repeated` [`Keyword`][k] | Extracted keywords from the article body like persons, locations, organizations etc.                                                         |
-	//| `onwards`      | `int64`                   | IDs of articles related to this article. Related articles are defined manually in the content management system by the editorial department. |
-	//| `entities`     | `string` `[deprecated]`   | Extracted entities from the article body like persons, locations, organizations etc. `deprecated` — use `keywords` instead.                  |
-	//
-	//[t]:   #enum-type
-	//[b]:   article_%DB%B0_body.html
-	//[e]:   article_%DB%B0_element.html
-	//[k]:   article_%DB%B0_keyword.html
-	//[st]:  #enum-subtype
-	//[ref]: reference.html
-	Id          int64           `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Type        Article_Type    `protobuf:"varint,2,opt,name=type,proto3,enum=stroeer.core.v1.Article_Type" json:"type,omitempty"`
-	SubType     Article_SubType `protobuf:"varint,3,opt,name=sub_type,json=subType,proto3,enum=stroeer.core.v1.Article_SubType" json:"sub_type,omitempty"`
-	SectionTree *Reference      `protobuf:"bytes,4,opt,name=section_tree,json=sectionTree,proto3" json:"section_tree,omitempty"`
-	//*
-	//## `fields`
-	//
-	//The entry set is defined by the content management system and
-	//will vary depending on the main type of the article.
-	//
-	//⚠ Clients must be resilient to unknown or missing entries. ⚠
-	//
-	//### For `Article.Type.ARTICLE`
-	//
-	//this map will contain the following data:
-	//
-	//| key                    | mandatory | description                                                                                       |
-	//|------------------------|-----------|---------------------------------------------------------------------------------------------------|
-	//| `headline`             | *         | the headline for this content                                                                     |
-	//| `top_line`             | *         | "dachzeile"                                                                                       |
-	//| `ref_path`             | *         | URL path for this article e.g. `/${section_tree}/id_${id}/${title}.html`                          |
-	//| `ref_canonical`        | *         | Canonical URL of this article, may differ if external, e.g. https://www.example.com/external.html |
-	//| `summary`              |           | summary for this content                                                                          |
-	//| `teaser_text`          |           | used on teasers, overrides `summary`                                                              |
-	//| `meta_robots`          |           |                                                                                                   |
-	//| `social_headline`      |           | used for social markup, overrides `headline`                                                      |
-	//| `headline_short`       |           | used for "Schlagzeilen", overrides `headline`                                                     |
-	//| `meta_title`           |           | HTML `<meta title>`                                                                               |
-	//| `expert_line`          |           |                                                                                                   |
-	//| `social_description`   |           |                                                                                                   |
-	//| `meta_description`     |           | HTML `<meta description>`                                                                         |
-	//| `reading_time_minutes` |           | estimated reading time in minutes                                                                 |
-	//
-	//
-	//### For `Article.Type.GALLERY`
-	//
-	//this map will contain the following data:
-	//
-	//| key        | mandatory | description                   |
-	//|------------|-----------|-------------------------------|
-	//| `headline` | *         | the headline for this content |
-	//
-	Fields   map[string]string  `protobuf:"bytes,5,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Bodies   []*Article_Body    `protobuf:"bytes,6,rep,name=bodies,proto3" json:"bodies,omitempty"`
-	Metadata *Article_Metadata  `protobuf:"bytes,7,opt,name=metadata,proto3" json:"metadata,omitempty"`
-	Elements []*Article_Element `protobuf:"bytes,8,rep,name=elements,proto3" json:"elements,omitempty"`
-	Keywords []*Article_Keyword `protobuf:"bytes,9,rep,name=keywords,proto3" json:"keywords,omitempty"`
-	Onwards  []int64            `protobuf:"varint,10,rep,packed,name=onwards,proto3" json:"onwards,omitempty"`
+	Id          int64              `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Type        Article_Type       `protobuf:"varint,2,opt,name=type,proto3,enum=stroeer.core.v1.Article_Type" json:"type,omitempty"`
+	SubType     Article_SubType    `protobuf:"varint,3,opt,name=sub_type,json=subType,proto3,enum=stroeer.core.v1.Article_SubType" json:"sub_type,omitempty"`
+	SectionTree *Reference         `protobuf:"bytes,4,opt,name=section_tree,json=sectionTree,proto3" json:"section_tree,omitempty"`
+	Fields      map[string]string  `protobuf:"bytes,5,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Bodies      []*Article_Body    `protobuf:"bytes,6,rep,name=bodies,proto3" json:"bodies,omitempty"`
+	Metadata    *Article_Metadata  `protobuf:"bytes,7,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Elements    []*Article_Element `protobuf:"bytes,8,rep,name=elements,proto3" json:"elements,omitempty"`
+	Keywords    []*Article_Keyword `protobuf:"bytes,9,rep,name=keywords,proto3" json:"keywords,omitempty"`
+	Onwards     []int64            `protobuf:"varint,10,rep,packed,name=onwards,proto3" json:"onwards,omitempty"`
 	// Deprecated: Do not use.
 	Entities []string `protobuf:"bytes,100,rep,name=entities,proto3" json:"entities,omitempty"`
 }
@@ -925,36 +770,30 @@ func (x *Article_Element) GetChildren() []*Article_Element {
 	return nil
 }
 
+//*
+//
+// The `Body` represents a basic block. Each `Body` is self-contained and holds
+// all the data required for rendering within its data structures.
+//
+// Common use cases for this are `Type.BODY` where the textual article body can be found
+// and the `TYPE.ARTICLE_SOURCE` where onward articles are referenced.
+//
+// | Field name     | Type                         | Description                                                                                                                                  |
+// |----------------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
+// | `children`     | `repeated` [`BodyNode`][bn]  | Recursive/Nested structure that usually represents the textual body / Markup / HTML                                                          |
+// | `type`         | [`Type`][t]                  | Unique ID of the article defined by the content management system (required).                                                                |
+//
+// [bn]: #bodynode
+// [t]:  #type
+//
+// @CodeBlockStart protobuf
 type Article_Body struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	//
-	//The `Body` represents a basic block. Each `Body` is self-contained and holds
-	//all the data required for rendering within its data structures.
-	//
-	//Common use cases for this are `Type.BODY` where the textual article body can be found
-	//and the `TYPE.ARTICLE_SOURCE` where onward articles are referenced.
-	//
-	//## Proto
-	//```protobuf
-	// message Body {
-	//     repeated BodyNode children = 1;
-	//     Type type = 2;
-	// }
-	//```
-	//
-	//| Field name     | Type                         | Description                                                                                                                                  |
-	//|----------------|------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `children`     | `repeated` [`BodyNode`][bn]  | Recursive/Nested structure that usually represents the textual body / Markup / HTML                                                          |
-	//| `type`         | [`Type`][t]                  | Unique ID of the article defined by the content management system (required).                                                                |
-	//
-	//[bn]: #bodynode
-	//[t]:  #type
 	Children []*Article_Body_BodyNode `protobuf:"bytes,1,rep,name=children,proto3" json:"children,omitempty"`
-	Type     Article_Body_Type        `protobuf:"varint,2,opt,name=type,proto3,enum=stroeer.core.v1.Article_Body_Type" json:"type,omitempty"`
+	Type     Article_Body_Type        `protobuf:"varint,2,opt,name=type,proto3,enum=stroeer.core.v1.Article_Body_Type" json:"type,omitempty"` //* @CodeBlockEnd
 }
 
 func (x *Article_Body) Reset() {
@@ -1003,44 +842,31 @@ func (x *Article_Body) GetType() Article_Body_Type {
 	return Article_Body_TYPE_UNSPECIFIED
 }
 
+//*
+// Article metadata like publication state and technical timestamps.
+//
+// | Field name               | Type                | Description                                                                                                                                                                                                                                                                                                                  |
+// |--------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+// | `state`                  | [`State`][state]    | State of the article in the content management system. See [`enum State`](#enum-state)                                                                                                                                                                                                                                       |
+// | `start_time`             | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig von_) at which the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                       |
+// | `end_time`               | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig bis_) till the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                           |
+// | `publish_time`           | [`Timestamp`][ts]   | Editorial timestamp (_Publikationsdatum_) of the first publication of the article in seconds of UTC time since Unix epoch. This date will be set automatically by the content management system.                                                                                                                             |
+// | `update_time`            | [`Timestamp`][ts]   | Editorial timestamp (_Aktualisierungsdatum_) at which the article was updated in seconds of UTC time since Unix epoch. On first publication this timestamp matches `publish_time`. Afterwards it's either updated manually in the content management system or automatically if the article content changed *significantly*. |
+// | `transformation_time`    | [`Timestamp`][ts]   | Technical timestamp at which the article was transformed in the API layer in seconds of UTC time since Unix epoch.                                                                                                                                                                                                           |
+// | `transformation_errors`  | `int64`             | Number of errors occurred while fetching and/or transforming optional article components (e.g. `embeds` or nested `documents`) to an `article` message.                                                                                                                                                                      |
+// | `last_modification_time` | [`Timestamp`][ts]   | Technical timestamp at which the article was published regardless of the amount and significance of the change.                                                                                                                                                                                                              |
+// | `event_source`           | [`EventSource`][es] | Source of the event that caused this item to be transformed and to be written into the DB.                                                                                                                                                                                                                                   |
+//
+// [ts]:    https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp
+// [state]: #state
+// [es]:    #enum-eventsource
+//
+// @CodeBlockStart protobuf
 type Article_Metadata struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	//Article metadata like publication state and technical timestamps.
-	//
-	//## Proto
-	//```protobuf
-	// message Metadata {
-	//     State state = 1;
-	//     google.protobuf.Timestamp start_time = 2;
-	//     google.protobuf.Timestamp end_time = 3;
-	//     google.protobuf.Timestamp publish_time = 4;
-	//     google.protobuf.Timestamp update_time = 5;
-	//     google.protobuf.Timestamp transformation_time = 6;
-	//     int64 transformation_errors = 7;
-	//     google.protobuf.Timestamp last_modification_time = 8;
-	//     EventSource event_source = 9;
-	// }
-	//```
-	//
-	//| Field name               | Type                | Description                                                                                                                                                                                                                                                                                                                  |
-	//|--------------------------|---------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `state`                  | [`State`][state]    | State of the article in the content management system. See [`enum State`](#enum-state)                                                                                                                                                                                                                                       |
-	//| `start_time`             | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig von_) at which the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                       |
-	//| `end_time`               | [`Timestamp`][ts]   | Manually set editorial timestamp (_Gültig bis_) till the article is valid to deliver on digital platforms in seconds of UTC time since Unix epoch.                                                                                                                                                                           |
-	//| `publish_time`           | [`Timestamp`][ts]   | Editorial timestamp (_Publikationsdatum_) of the first publication of the article in seconds of UTC time since Unix epoch. This date will be set automatically by the content management system.                                                                                                                             |
-	//| `update_time`            | [`Timestamp`][ts]   | Editorial timestamp (_Aktualisierungsdatum_) at which the article was updated in seconds of UTC time since Unix epoch. On first publication this timestamp matches `publish_time`. Afterwards it's either updated manually in the content management system or automatically if the article content changed *significantly*. |
-	//| `transformation_time`    | [`Timestamp`][ts]   | Technical timestamp at which the article was transformed in the API layer in seconds of UTC time since Unix epoch.                                                                                                                                                                                                           |
-	//| `transformation_errors`  | `int64`             | Number of errors occurred while fetching and/or transforming optional article components (e.g. `embeds` or nested `documents`) to an `article` message.                                                                                                                                                                      |
-	//| `last_modification_time` | [`Timestamp`][ts]   | Technical timestamp at which the article was published regardless of the amount and significance of the change.                                                                                                                                                                                                              |
-	//| `event_source`           | [`EventSource`][es] | Source of the event that caused this item to be transformed and to be written into the DB.                                                                                                                                                                                                                                   |
-	//
-	//[ts]:    https://developers.google.com/protocol-buffers/docs/reference/google.protobuf#google.protobuf.Timestamp
-	//[state]: #state
-	//[es]:    #enum-eventsource
 	State                Article_Metadata_State       `protobuf:"varint,1,opt,name=state,proto3,enum=stroeer.core.v1.Article_Metadata_State" json:"state,omitempty"`
 	StartTime            *timestamppb.Timestamp       `protobuf:"bytes,2,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime              *timestamppb.Timestamp       `protobuf:"bytes,3,opt,name=end_time,json=endTime,proto3" json:"end_time,omitempty"`
@@ -1147,19 +973,21 @@ func (x *Article_Metadata) GetEventSource() Article_Metadata_EventSource {
 	return Article_Metadata_EVENT_SOURCE_UNSPECIFIED
 }
 
+//*
+// Extracted keywords from the article body like persons, locations, organizations etc.
+//
+// | Field name              | Type              | Description                                                                                                                                                                                                                                                                                                           |
+// |-------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+// | `value`                 | `string`          | Unique value of this keyword.                                                                                                                                                                                                                                |
+// | `type`                 | `string`          | Type/Category of this keyword like `location`, `organization`, `person`                                                                                                                                                                                                                                |
+// | `score`                 | `float`          | Score for the relevance of this keyword set by the engine |
+//
+// @CodeBlockStart protobuf
 type Article_Keyword struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	// Extracted keywords from the article body like persons, locations, organizations etc.
-	//
-	// | Field name              | Type              | Description                                                                                                                                                                                                                                                                                                           |
-	// |-------------------------|-------------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-	// | `value`                 | `string`          | Unique value of this keyword.                                                                                                                                                                                                                                |
-	// | `type`                 | `string`          | Type/Category of this keyword like `location`, `organization`, `person`                                                                                                                                                                                                                                |
-	// | `score`                 | `float`          | Score for the relevance of this keyword set by the engine |
 	Value string  `protobuf:"bytes,1,opt,name=value,proto3" json:"value,omitempty"`
 	Type  string  `protobuf:"bytes,2,opt,name=type,proto3" json:"type,omitempty"`
 	Score float32 `protobuf:"fixed32,3,opt,name=score,proto3" json:"score,omitempty"`
@@ -1218,37 +1046,30 @@ func (x *Article_Keyword) GetScore() float32 {
 	return 0
 }
 
+//*
+// Asset of an [Element](article_>_element.html).
+//
+// An asset configuration is dependant upon its use, it may alter depending
+// on its [`type`](#enum-type) field.
+//
+// | Field name | Type                  | Description                                                                                                                                    |
+// |------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
+// | `type`     | [`Type`][at]          | Type of the asset.                                                                                                                             |
+// | `fields`   | `map<string, string>` | Generic map containing general content and configuration information of the asset. Clients must be resilient to unknown or missing entry sets. |
+// | `metadata` | [`Metadata`][meta]    | Only present for `assets` of `TYPE.METADATA`. Technical metadata for the parent `element` (state, validity, ...). See [`Metadata`][meta]       |
+//
+// [at]: #enum-type
+// [meta]: article_%3E_metadata.html
+//
+// @CodeBlockStart protobuf
 type Article_Element_Asset struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	//Asset of an [Element](article_>_element.html).
-	//
-	//An asset configuration is dependant upon its use, it may alter depending
-	//on its [`type`](#enum-type) field.
-	//
-	//### Protobuf
-	//```protobuf
-	// message Asset {
-	//      Type type = 1;
-	//      map<string, string> fields = 2;
-	//      Metadata metadata = 3;
-	// }
-	//```
-	//
-	//| Field name | Type                  | Description                                                                                                                                    |
-	//|------------|-----------------------|------------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `type`     | [`Type`][at]          | Type of the asset.                                                                                                                             |
-	//| `fields`   | `map<string, string>` | Generic map containing general content and configuration information of the asset. Clients must be resilient to unknown or missing entry sets. |
-	//| `metadata` | [`Metadata`][meta]    | Only present for `assets` of `TYPE.METADATA`. Technical metadata for the parent `element` (state, validity, ...). See [`Metadata`][meta]       |
-	//
-	//[at]: #enum-type
-	//[meta]: article_%3E_metadata.html
 	Type     Article_Element_Asset_Type `protobuf:"varint,1,opt,name=type,proto3,enum=stroeer.core.v1.Article_Element_Asset_Type" json:"type,omitempty"`
 	Fields   map[string]string          `protobuf:"bytes,2,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Metadata *Article_Metadata          `protobuf:"bytes,3,opt,name=metadata,proto3" json:"metadata,omitempty"`
+	Metadata *Article_Metadata          `protobuf:"bytes,3,opt,name=metadata,proto3" json:"metadata,omitempty"` //* @CodeBlockEnd
 }
 
 func (x *Article_Element_Asset) Reset() {
@@ -1304,85 +1125,25 @@ func (x *Article_Element_Asset) GetMetadata() *Article_Metadata {
 	return nil
 }
 
+//*
+// ## `BodyNode`
+//
+// Recursive structure representing all types of possible nodes inside an article.
+//
+// One use-case is to represent [HTML-like](#html-like) markup in tapir, but it
+// is also used to map [custom](#custom) elements that require a strict
+// positional placement within the textual body. Things that are not part of the
+// textual article body are represented as individual [`Body`][b] parts so they
+// can be rendered independently if required.
+//
+// Clients must be resilient to unknown or missing nodes.
+//
+// @CodeBlockStart protobuf
 type Article_Body_BodyNode struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	//*
-	//## `BodyNode`
-	//
-	//Recursive structure representing all types of possible nodes inside an article.
-	//
-	//One use-case is to represent [HTML-like](#html-like) markup in tapir, but it
-	//is also used to map [custom](#custom) elements that require a strict
-	//positional placement within the textual body. Things that are not part of the
-	//textual article body are represented as individual [`Body`][b] parts so they
-	//can be rendered independently if required.
-	//
-	//Clients must be resilient to unknown or missing nodes.
-	//
-	//### Proto
-	//```protobuf
-	// message BodyNode {
-	//     string type = 1;
-	//     string text = 2;
-	//     map<string, string> fields = 3;
-	//     repeated BodyNode children = 4;
-	//     repeated Element elements = 5;
-	// }
-	//```
-	//
-	//| Field name | Type                        | Description                                                                                                    |
-	//|------------|-----------------------------|----------------------------------------------------------------------------------------------------------------|
-	//| `type`     | `string`                    | Type of the node (required).                                                                                   |
-	//| `text`     | `string`                    | Text of the node, only set for text nodes (`type == 'text'`).                                                  |
-	//| `fields`   | `map<string, string>`       | Additional information for the node depending on it's type, e.g. `href` for `a` nodes. See [`fields`](#fields) |
-	//| `children` | `repeated` [`BodyNode`][bn] | Nested Items, e.g. the `text` of a `<p>` or a `<a>`.                                                           |
-	//| `elements` | `repeated` [`Element`][e]   | [Elements][e] of the node, e.g. video, image, gallery, embed, ...                                              |
-	//
-	//[b]: #article--body
-	//[e]: article_%3E_element.html
-	//
-	//### `fields`
-	//
-	//#### _HTML like_
-	//
-	//| type           | description                                                                                                                                               |
-	//|----------------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
-	//| `text`         | most basic `type`, its text value can be found in the `text` field. The `word_count` can be found in the `BodyNode.fields` for each `BodyNode[type=text]` |
-	//| `p`            | `paragraph` / `<p>`                                                                                                                                       |
-	//| `span`         | todo / `<span>`                                                                                                                                           |
-	//| `sub_headline` | a sub headline, may be part of the _table of contents_                                                                                                    |
-	//| `a`            | `anchor` / `<a>`                                                                                                                                          |
-	//| `strong`       | `strong` / `<strong>`                                                                                                                                     |
-	//| `em`           | `emphasis` / `<em>`                                                                                                                                       |
-	//| `br`           | `line break` / `<br>`                                                                                                                                     |
-	//| `ul`           | `unordered list` / `<ul>`                                                                                                                                 |
-	//| `ol`           | `ordered list` / `<ol>`                                                                                                                                   |
-	//| `li`           | `list` / `<li>`                                                                                                                                           |
-	//| `table`        | `table` / `<table>`                                                                                                                                       |
-	//| `thead`        | `table head` / `<thead>`                                                                                                                                  |
-	//| `tbody`        | `table body` / `<tbody>`                                                                                                                                  |
-	//| `tfoot`        | `table footer` / `<tfoot>`                                                                                                                                |
-	//| `th`           | `table header` / `<th>`                                                                                                                                   |
-	//| `tr`           | `table row` / `<tr>`                                                                                                                                      |
-	//| `td`           | `table data cell` / `<td>`                                                                                                                                |
-	//
-	//
-	//### _Custom_
-	//
-	//| type            | description                                                                   |
-	//|-----------------|-------------------------------------------------------------------------------|
-	//| `image`         | inline image element, check `elements`                                        |
-	//| `video`         | inline video element, check `elements`                                        |
-	//| `gallery`       | inline gallery element, check `elements`                                      |
-	//| `oembed`        | inline oEmbed element, check `elements`                                       |
-	//| `esi`           | inline edge side include element, check `elements`                            |
-	//| `quote`         | inline quotation element, check `elements`                                    |
-	//| `infobox`       | inline box, consists of textual content in `children` and optional `elements` |
-	//| `pros_and_cons` | pros and cons box, consists of `elements` and structured text in `children`   |
-	//
 	Type     string                   `protobuf:"bytes,1,opt,name=type,proto3" json:"type,omitempty"`
 	Text     string                   `protobuf:"bytes,2,opt,name=text,proto3" json:"text,omitempty"`
 	Fields   map[string]string        `protobuf:"bytes,3,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
@@ -1467,7 +1228,7 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x66, 0x2f, 0x74, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x70, 0x72, 0x6f, 0x74,
 	0x6f, 0x1a, 0x1c, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f,
 	0x76, 0x31, 0x2f, 0x73, 0x68, 0x61, 0x72, 0x65, 0x64, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22,
-	0xec, 0x18, 0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
+	0xf6, 0x18, 0x0a, 0x07, 0x41, 0x72, 0x74, 0x69, 0x63, 0x6c, 0x65, 0x12, 0x0e, 0x0a, 0x02, 0x69,
 	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x31, 0x0a, 0x04, 0x74,
 	0x79, 0x70, 0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1d, 0x2e, 0x73, 0x74, 0x72, 0x6f,
 	0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x72, 0x74, 0x69,
@@ -1654,7 +1415,7 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x0a, 0x05, 0x45, 0x4d, 0x42, 0x45, 0x44, 0x10, 0x05, 0x12, 0x0a, 0x0a, 0x06, 0x41, 0x55, 0x54,
 	0x48, 0x4f, 0x52, 0x10, 0x06, 0x12, 0x0e, 0x0a, 0x06, 0x41, 0x47, 0x45, 0x4e, 0x43, 0x59, 0x10,
 	0x07, 0x1a, 0x02, 0x08, 0x01, 0x12, 0x0c, 0x0a, 0x08, 0x45, 0x58, 0x54, 0x45, 0x52, 0x4e, 0x41,
-	0x4c, 0x10, 0x08, 0x22, 0xb8, 0x01, 0x0a, 0x07, 0x53, 0x75, 0x62, 0x54, 0x79, 0x70, 0x65, 0x12,
+	0x4c, 0x10, 0x08, 0x22, 0xc2, 0x01, 0x0a, 0x07, 0x53, 0x75, 0x62, 0x54, 0x79, 0x70, 0x65, 0x12,
 	0x18, 0x0a, 0x14, 0x53, 0x55, 0x42, 0x5f, 0x54, 0x59, 0x50, 0x45, 0x5f, 0x55, 0x4e, 0x53, 0x50,
 	0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x08, 0x0a, 0x04, 0x4e, 0x45, 0x57,
 	0x53, 0x10, 0x01, 0x12, 0x0a, 0x0a, 0x06, 0x43, 0x4f, 0x4c, 0x55, 0x4d, 0x4e, 0x10, 0x02, 0x12,
@@ -1665,12 +1426,13 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x06, 0x12, 0x0d, 0x0a, 0x09, 0x45, 0x56, 0x45, 0x52, 0x47, 0x52, 0x45, 0x45, 0x4e, 0x10, 0x07,
 	0x12, 0x11, 0x0a, 0x0d, 0x41, 0x47, 0x45, 0x4e, 0x43, 0x59, 0x5f, 0x49, 0x4d, 0x50, 0x4f, 0x52,
 	0x54, 0x10, 0x08, 0x12, 0x0f, 0x0a, 0x0b, 0x41, 0x44, 0x56, 0x45, 0x52, 0x54, 0x4f, 0x52, 0x49,
-	0x41, 0x4c, 0x10, 0x09, 0x12, 0x08, 0x0a, 0x04, 0x51, 0x55, 0x49, 0x5a, 0x10, 0x0a, 0x42, 0x40,
-	0x0a, 0x12, 0x64, 0x65, 0x2e, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72,
-	0x65, 0x2e, 0x76, 0x31, 0x50, 0x01, 0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
-	0x6f, 0x6d, 0x2f, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2f, 0x67, 0x6f, 0x2d, 0x74, 0x61,
-	0x70, 0x69, 0x72, 0x2f, 0x63, 0x6f, 0x72, 0x65, 0x2f, 0x76, 0x31, 0x3b, 0x63, 0x6f, 0x72, 0x65,
-	0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x41, 0x4c, 0x10, 0x09, 0x12, 0x08, 0x0a, 0x04, 0x51, 0x55, 0x49, 0x5a, 0x10, 0x0a, 0x12, 0x08,
+	0x0a, 0x04, 0x47, 0x41, 0x4d, 0x45, 0x10, 0x0b, 0x42, 0x40, 0x0a, 0x12, 0x64, 0x65, 0x2e, 0x73,
+	0x74, 0x72, 0x6f, 0x65, 0x65, 0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x50, 0x01,
+	0x5a, 0x28, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x73, 0x74, 0x72,
+	0x6f, 0x65, 0x65, 0x72, 0x2f, 0x67, 0x6f, 0x2d, 0x74, 0x61, 0x70, 0x69, 0x72, 0x2f, 0x63, 0x6f,
+	0x72, 0x65, 0x2f, 0x76, 0x31, 0x3b, 0x63, 0x6f, 0x72, 0x65, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74,
+	0x6f, 0x33,
 }
 
 var (
