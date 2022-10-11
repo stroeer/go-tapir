@@ -13,13 +13,13 @@ jobs:
     steps:      
       - run: echo $RELEASE_TAG
 
-      - uses: actions/setup-go@v2
+      - uses: actions/setup-go@v3
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           path: 'go-tapir'
 
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
         with:
           repository: 'stroeer/tapir'
           ref: '${{ env.RELEASE_TAG }}'
