@@ -25,8 +25,8 @@ jobs:
           ref: '${{ env.RELEASE_TAG }}'
           path: 'tapir'
 
-      - name: generate module 
-        run: make LANGUAGE=go && make go-mod
+      - name: generate module
+        run: make LANGUAGE=go
         working-directory: tapir
       
       - name: synchronize module
@@ -38,7 +38,10 @@ jobs:
           --exclude=README.md \
           --exclude=go.mod \
           --exclude=go.sum
-          
+
+      - run: go mod tidy
+        working-directory: go-tapir
+
       - name: release module
         working-directory: go-tapir
         run: |                    
