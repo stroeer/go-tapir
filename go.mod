@@ -1,6 +1,6 @@
 module github.com/stroeer/go-tapir
 
-go 1.19
+go 1.17
 
 require (
 	google.golang.org/grpc v1.50.0
