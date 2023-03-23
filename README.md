@@ -4,7 +4,7 @@
 
 This repository contains the generated Go packages for the **T**-online **API** **R**epository ([tapir](https://github.com/stroeer/tapir)) protocol buffer types, and the generated [gRPC](http://grpc.io/) code necessary for interacting with the t-online APIs.
 
-The source proto files can be found in [tapir](https://github.com/stroeer/tapir/stroeer).
+The source proto files can be found in [tapir](https://github.com/stroeer/tapir/tree/main/stroeer).
 
 ## example
 
