@@ -1,0 +1,29 @@
+name: pull-request
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          path: 'go-tapir'
+
+      - uses: actions/setup-go@v4
+        with:
+          go-version-file: 'go-tapir/go.mod'
+
+      - uses: actions/checkout@v3
+        with:
+          repository: 'stroeer/tapir'
+          path: 'tapir'
+
+      - uses: bufbuild/buf-setup-action@v1
+
+      - name: generate code
+        run: make generate TEMPLATE=buf.gen.go.yaml
+        working-directory: tapir
