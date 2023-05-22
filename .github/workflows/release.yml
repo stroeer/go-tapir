@@ -53,7 +53,7 @@ jobs:
           git config --global user.email 'tapir-bot@users.noreply.github.com'
           git status
           git add -A 
-          git commit -vsam "tapir $RELEASE_TAG"
+          git commit -vsam "tapir $RELEASE_TAG" || true
           git tag -a $RELEASE_TAG -m "$RELEASE_TAG"
           git push origin $RELEASE_TAG 
           git push
