@@ -9,7 +9,7 @@ jobs:
   generate:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           path: 'go-tapir'
 
@@ -17,7 +17,7 @@ jobs:
         with:
           go-version-file: 'go-tapir/go.mod'
 
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         with:
           repository: 'stroeer/tapir'
           path: 'tapir'
