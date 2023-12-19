@@ -802,7 +802,7 @@ func (x *Article) GetEntities() []string {
 //
 // | Field name         | Type                                             | Description                                                                                                                   |
 // |--------------------|--------------------------------------------------|-------------------------------------------------------------------------------------------------------------------------------|
-// | id                 | string                                           | The unique identifier (cms id) of the author.                                                                                 |
+// | id                 | int64                                           | The unique identifier (cms id) of the author.                                                                                 |
 // | type               | [Author.Type](#enum-type)                        | The type of the author entity.                                                                                                |
 // | fields             | map[string, string]                              | The fields of the author. This is a map of key-value pairs. The keys are the field names and the values are the field values. |
 // | elements           | [Article.Element](article_%DB%B0_element.html)[] | The elements of the author, e.g. the author's profile picture.                                                                |
@@ -817,7 +817,7 @@ type Author struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id               string                 `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id               int64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	Type             Author_Type            `protobuf:"varint,2,opt,name=type,proto3,enum=stroeer.core.v1.Author_Type" json:"type,omitempty"`
 	Fields           map[string]string      `protobuf:"bytes,3,rep,name=fields,proto3" json:"fields,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"` // migrate from Asset[type=metadata]
 	Elements         []*Article_Element     `protobuf:"bytes,4,rep,name=elements,proto3" json:"elements,omitempty"`                                                                                     // profile picture
@@ -859,11 +859,11 @@ func (*Author) Descriptor() ([]byte, []int) {
 	return file_stroeer_core_v1_article_proto_rawDescGZIP(), []int{1}
 }
 
-func (x *Author) GetId() string {
+func (x *Author) GetId() int64 {
 	if x != nil {
 		return x.Id
 	}
-	return ""
+	return 0
 }
 
 func (x *Author) GetType() Author_Type {
@@ -1740,7 +1740,7 @@ var file_stroeer_core_v1_article_proto_rawDesc = []byte{
 	0x10, 0x0b, 0x12, 0x0e, 0x0a, 0x0a, 0x43, 0x4f, 0x4d, 0x50, 0x4c, 0x49, 0x41, 0x4e, 0x43, 0x45,
 	0x10, 0x0c, 0x12, 0x0a, 0x0a, 0x06, 0x52, 0x45, 0x43, 0x49, 0x50, 0x45, 0x10, 0x0d, 0x22, 0xf2,
 	0x04, 0x0a, 0x06, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18,
-	0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x04, 0x74, 0x79, 0x70,
+	0x01, 0x20, 0x01, 0x28, 0x03, 0x52, 0x02, 0x69, 0x64, 0x12, 0x30, 0x0a, 0x04, 0x74, 0x79, 0x70,
 	0x65, 0x18, 0x02, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x1c, 0x2e, 0x73, 0x74, 0x72, 0x6f, 0x65, 0x65,
 	0x72, 0x2e, 0x63, 0x6f, 0x72, 0x65, 0x2e, 0x76, 0x31, 0x2e, 0x41, 0x75, 0x74, 0x68, 0x6f, 0x72,
 	0x2e, 0x54, 0x79, 0x70, 0x65, 0x52, 0x04, 0x74, 0x79, 0x70, 0x65, 0x12, 0x3b, 0x0a, 0x06, 0x66,
