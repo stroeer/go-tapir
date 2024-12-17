@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	ArticleExtenderService_GetQuestions_FullMethodName = "/stroeer.page.article.v1.ArticleExtenderService/GetQuestions"
+	ArticleExtenderService_GetAnswer_FullMethodName    = "/stroeer.page.article.v1.ArticleExtenderService/GetAnswer"
 )
 
 // ArticleExtenderServiceClient is the client API for ArticleExtenderService service.
@@ -27,6 +28,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type ArticleExtenderServiceClient interface {
 	GetQuestions(ctx context.Context, in *GetQuestionsRequest, opts ...grpc.CallOption) (*GetQuestionsResponse, error)
+	GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error)
 }
 
 type articleExtenderServiceClient struct {
@@ -46,11 +48,21 @@ func (c *articleExtenderServiceClient) GetQuestions(ctx context.Context, in *Get
 	return out, nil
 }
 
+func (c *articleExtenderServiceClient) GetAnswer(ctx context.Context, in *GetAnswerRequest, opts ...grpc.CallOption) (*GetAnswerResponse, error) {
+	out := new(GetAnswerResponse)
+	err := c.cc.Invoke(ctx, ArticleExtenderService_GetAnswer_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // ArticleExtenderServiceServer is the server API for ArticleExtenderService service.
 // All implementations must embed UnimplementedArticleExtenderServiceServer
 // for forward compatibility
 type ArticleExtenderServiceServer interface {
 	GetQuestions(context.Context, *GetQuestionsRequest) (*GetQuestionsResponse, error)
+	GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error)
 	mustEmbedUnimplementedArticleExtenderServiceServer()
 }
 
@@ -60,6 +72,9 @@ type UnimplementedArticleExtenderServiceServer struct {
 
 func (UnimplementedArticleExtenderServiceServer) GetQuestions(context.Context, *GetQuestionsRequest) (*GetQuestionsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetQuestions not implemented")
+}
+func (UnimplementedArticleExtenderServiceServer) GetAnswer(context.Context, *GetAnswerRequest) (*GetAnswerResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetAnswer not implemented")
 }
 func (UnimplementedArticleExtenderServiceServer) mustEmbedUnimplementedArticleExtenderServiceServer() {
 }
@@ -93,6 +108,24 @@ func _ArticleExtenderService_GetQuestions_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
+func _ArticleExtenderService_GetAnswer_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetAnswerRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(ArticleExtenderServiceServer).GetAnswer(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: ArticleExtenderService_GetAnswer_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(ArticleExtenderServiceServer).GetAnswer(ctx, req.(*GetAnswerRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // ArticleExtenderService_ServiceDesc is the grpc.ServiceDesc for ArticleExtenderService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -103,6 +136,10 @@ var ArticleExtenderService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetQuestions",
 			Handler:    _ArticleExtenderService_GetQuestions_Handler,
+		},
+		{
+			MethodName: "GetAnswer",
+			Handler:    _ArticleExtenderService_GetAnswer_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
